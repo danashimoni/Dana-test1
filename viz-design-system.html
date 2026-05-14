@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Viz.ai Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+/* ─── FIGMA TOKENS ── Component (Mapped) · node 9365-57140 ─── */
+:root {
+  --surface-page:      #1a1d24;
+  --surface-1:         #242833;
+  --surface-2:         #2c3039;
+  --surface-3:         #3c4455;
+  --surface-sidebar:   #0f1117;
+
+  --text-primary:      #f3f4f5;
+  --text-secondary:    #c0c0c9;
+  --text-tertiary:     #808496;
+  --text-action:       #3485f7;
+  --text-action-hover: #0066ff;
+  --text-action-sel:   #99c2ff;
+  --text-success:      #32ab45;
+  --text-error:        #ff586b;
+  --text-warning:      #f6ad3f;
+
+  --icon-secondary:    #c0c0c9;
+  --icon-tertiary:     #a3a6b5;
+
+  --action-primary:    #3485f7;
+  --action-hover:      #0066ff;
+  --action-selected:   #99c2ff;
+  --action-destructive:#ff586b;
+  --action-destr-hover:#ff453a;
+  --action-disabled:   #5a606d;
+  --action-level-1:    rgba(255,255,255,0.05);
+  --action-level-2:    rgba(255,255,255,0.10);
+  --action-level-3:    rgba(255,255,255,0.20);
+
+  --border-0:          rgba(255,255,255,0.10);
+  --border-1:          rgba(255,255,255,0.20);
+  --border-2:          rgba(255,255,255,0.30);
+  --border-3:          rgba(255,255,255,0.40);
+  --border-default:    #a3a6b5;
+  --border-focus:      #5ca3ff;
+  --border-error:      rgba(255,88,107,0.40);
+  --border-warning:    rgba(246,173,63,0.40);
+
+  --color-success:     #32ab45;
+  --color-error:       #ff586b;
+  --color-warning:     #f6ad3f;
+  --color-info:        #3485f7;
+
+  /* Typography */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  /* Spacing */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px;
+  --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+
+  /* Motion */
+  --ease: 150ms ease;
+  --ease-out: 200ms ease-out;
+}
+
+/* ─── RESET ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{font-family:var(--font);background:var(--surface-page);color:var(--text-primary);line-height:1.6;overflow-x:hidden}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+a{color:var(--text-action);text-decoration:none}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-1);border-radius:2px}
+::selection{background:rgba(52,133,247,.25)}
+
+/* ─── SHELL ─── */
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:248px;min-width:248px;
+  background:var(--surface-sidebar);
+  display:flex;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
+  border-right:1px solid rgba(255,255,255,0.06);
+  transition:width .2s ease,min-width .2s ease;
+}
+.sidebar.collapsed{width:0;min-width:0;border-right:none}
+
+.sb-wordmark{
+  display:flex;align-items:center;gap:12px;
+  padding:24px 22px 22px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.sb-logo-mark{
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.sb-logo-img{width:32px;height:auto;display:block}
+.sb-logo-divider{
+  width:1px;height:28px;background:rgba(255,255,255,.1);flex-shrink:0;
+}
+.sb-logo-text{display:flex;flex-direction:column;gap:2px}
+.sb-logo-name{font-size:13px;font-weight:600;color:var(--text-primary);line-height:1.2;letter-spacing:-.01em}
+.sb-logo-sub{font-size:9px;font-weight:500;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.12em;line-height:1.2}
+
+.sb-nav{flex:1;padding:20px 0 32px;overflow-y:auto}
+.sb-section{margin-bottom:28px}
+.sb-section-label{
+  font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-tertiary);padding:0 24px 8px;line-height:1;
+}
+.sb-list{list-style:none}
+.sb-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 24px;
+  font-size:13px;color:var(--text-secondary);
+  cursor:pointer;border:none;background:none;font-family:var(--font);
+  width:100%;text-align:left;
+  transition:color var(--ease),background var(--ease);
+  position:relative;white-space:nowrap;
+  border-left:2px solid transparent;
+}
+.sb-item:hover{color:var(--text-primary);background:rgba(255,255,255,.04)}
+.sb-item.active{color:var(--text-primary);border-left-color:var(--action-primary);background:rgba(52,133,247,.08);font-weight:500}
+.sb-item-dot{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
+.sb-item.active .sb-item-dot{opacity:1;background:var(--action-primary)}
+
+.sb-footer{
+  padding:16px 24px;
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sb-figma-link{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--text-tertiary);
+  transition:color var(--ease);
+}
+.sb-figma-link:hover{color:var(--text-secondary)}
+.sb-version{font-family:var(--mono);font-size:10px;color:var(--text-tertiary)}
+
+/* ─── MAIN ─── */
+.main{flex:1;overflow-y:auto;background:var(--surface-page);min-width:0}
+.toggle-btn{
+  position:fixed;top:20px;left:12px;z-index:99;
+  width:32px;height:32px;border-radius:6px;
+  background:var(--surface-sidebar);
+  border:1px solid rgba(255,255,255,.08);
+  display:none;align-items:center;justify-content:center;
+  color:var(--text-secondary);cursor:pointer;
+  transition:background var(--ease);
+}
+
+/* ─── PAGE HERO ─── */
+.page-hero{
+  padding:var(--s8) var(--s8) var(--s7);
+  border-bottom:1px solid var(--border-0);
+  max-width:1200px;
+}
+.page-hero-eyebrow{
+  font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--action-primary);margin-bottom:var(--s3);
+}
+.page-hero-title{
+  font-size:52px;font-weight:700;letter-spacing:-.03em;line-height:1.05;
+  color:var(--text-primary);margin-bottom:var(--s5);
+}
+.page-hero-desc{
+  font-size:16px;color:var(--text-secondary);line-height:1.7;
+  max-width:640px;font-weight:400;
+}
+.page-hero-meta{
+  display:flex;gap:var(--s5);margin-top:var(--s6);
+  border-top:1px solid var(--border-0);padding-top:var(--s5);
+}
+.page-hero-meta-item{display:flex;flex-direction:column;gap:4px}
+.page-hero-meta-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary)}
+.page-hero-meta-val{font-size:13px;color:var(--text-secondary)}
+
+/* ─── PAGE CONTENT ─── */
+.page-content{max-width:1200px;padding:var(--s7) var(--s8) var(--s9)}
+
+/* ─── SECTION ─── */
+.ds-section{margin-bottom:var(--s9)}
+.ds-section + .ds-section{border-top:1px solid var(--border-0);padding-top:var(--s7)}
+.ds-section-header{margin-bottom:var(--s6)}
+.ds-section-title{
+  font-size:22px;font-weight:600;letter-spacing:-.02em;
+  color:var(--text-primary);margin-bottom:var(--s3);
+}
+.ds-section-desc{font-size:14px;color:var(--text-secondary);line-height:1.65;max-width:580px}
+
+/* ─── COLOR GRID ─── */
+.color-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:2px;
+  border-radius:10px;overflow:hidden;
+}
+.color-tile{
+  position:relative;padding:0;border:none;background:none;
+  cursor:pointer;text-align:left;
+  display:flex;flex-direction:column;
+}
+.color-tile-swatch{
+  height:96px;width:100%;
+  transition:transform var(--ease);
+}
+.color-tile:hover .color-tile-swatch{transform:scale(1.02)}
+.color-tile-info{
+  padding:10px 12px 12px;
+  background:var(--surface-1);
+}
+.color-tile-name{font-size:12px;font-weight:600;color:var(--text-primary);line-height:1.3;margin-bottom:2px}
+.color-tile-hex{font-family:var(--mono);font-size:11px;color:var(--text-tertiary);display:block;margin-bottom:3px}
+.color-tile-token{font-family:var(--mono);font-size:10px;color:var(--action-primary);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.color-tile-copy{
+  position:absolute;top:8px;right:8px;
+  font-size:10px;font-weight:500;
+  background:rgba(0,0,0,.6);color:white;
+  padding:3px 7px;border-radius:4px;
+  opacity:0;transition:opacity var(--ease);
+}
+.color-tile:hover .color-tile-copy{opacity:1}
+
+/* Alpha swatch checker */
+.alpha-bg{
+  background-image:
+    linear-gradient(45deg,#666 25%,transparent 25%),
+    linear-gradient(-45deg,#666 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#666 75%),
+    linear-gradient(-45deg,transparent 75%,#666 75%);
+  background-size:10px 10px;
+  background-position:0 0,0 5px,5px -5px,-5px 0;
+  background-color:#444;
+}
+
+/* ─── PREVIEW CANVAS ─── */
+.preview-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--border-0)}
+.preview-bar{
+  display:flex;align-items:center;gap:0;
+  background:var(--surface-1);border-bottom:1px solid var(--border-0);
+}
+.preview-tab{
+  padding:10px 18px;font-size:12px;font-weight:500;
+  color:var(--text-tertiary);background:none;border:none;border-bottom:2px solid transparent;
+  cursor:pointer;transition:all var(--ease);margin-bottom:-1px;
+  font-family:var(--font);
+}
+.preview-tab:hover{color:var(--text-secondary)}
+.preview-tab.active{color:var(--text-primary);border-bottom-color:var(--action-primary)}
+.preview-canvas{
+  background:var(--surface-page);
+  padding:var(--s7) var(--s6);
+  display:flex;flex-wrap:wrap;gap:var(--s4);align-items:center;min-height:96px;
+}
+.preview-canvas.dark{background:var(--surface-2)}
+
+/* ─── CODE BLOCK ─── */
+.code-block{background:#0d0f14;border-radius:8px;overflow:hidden;margin:0}
+.code-block-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.07);
+}
+.code-block-lang{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.08em;
+}
+.code-copy-btn{
+  font-size:11px;font-family:var(--font);color:var(--text-tertiary);
+  padding:3px 10px;border:1px solid rgba(255,255,255,.12);border-radius:4px;
+  cursor:pointer;background:transparent;
+  transition:all var(--ease);
+}
+.code-copy-btn:hover{color:var(--text-primary);border-color:var(--border-2)}
+.code-copy-btn.done{color:var(--color-success);border-color:var(--color-success)}
+.code-pre{padding:20px;overflow-x:auto;margin:0}
+.code-pre code{
+  font-family:var(--mono);font-size:12.5px;line-height:1.75;
+  color:#c9d1d9;white-space:pre;display:block;
+}
+
+/* ─── PROPS TABLE ─── */
+.props-table-wrap{border-radius:8px;overflow:hidden;border:1px solid var(--border-0)}
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:10px 16px;text-align:left;
+  font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-tertiary);background:var(--surface-1);
+  border-bottom:1px solid var(--border-0);white-space:nowrap;
+}
+tbody td{
+  padding:11px 16px;border-bottom:1px solid var(--border-0);
+  font-size:13px;color:var(--text-secondary);vertical-align:top;line-height:1.5;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(255,255,255,.02)}
+code.prop-name{font-family:var(--mono);font-size:12px;color:var(--action-primary)}
+code.prop-type{font-family:var(--mono);font-size:12px;color:#79c0ff}
+code.prop-def{font-family:var(--mono);font-size:12px;color:var(--text-tertiary)}
+
+/* ─── SPEC ROW (label + visual bar) ─── */
+.spec-row{
+  display:grid;grid-template-columns:200px 1fr;
+  align-items:center;gap:var(--s5);padding:12px 0;
+  border-bottom:1px solid var(--border-0);
+}
+.spec-row:first-child{border-top:1px solid var(--border-0)}
+.spec-meta{display:flex;flex-direction:column;gap:2px}
+.spec-token{font-family:var(--mono);font-size:11px;color:var(--action-primary)}
+.spec-val{font-family:var(--mono);font-size:10px;color:var(--text-tertiary)}
+
+/* ─── DO / DON'T ─── */
+.dodont{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:8px;overflow:hidden}
+.do-card{background:rgba(50,171,69,.08);border:1px solid rgba(50,171,69,.25);border-radius:8px;padding:var(--s5) var(--s6)}
+.dont-card{background:rgba(255,88,107,.08);border:1px solid rgba(255,88,107,.25);border-radius:8px;padding:var(--s5) var(--s6)}
+.dodont-head{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:var(--s4)}
+.do-card .dodont-head{color:var(--color-success)}
+.dont-card .dodont-head{color:var(--color-error)}
+.dodont-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.dodont-list li{font-size:13px;color:var(--text-secondary);line-height:1.5;padding-left:14px;position:relative}
+.dodont-list li::before{content:'–';position:absolute;left:0;color:var(--text-tertiary)}
+
+/* ─── PLATFORM NAV ─── */
+.sb-platform-header{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 16px 6px;
+  margin:0 0 2px;
+  position:relative;
+}
+.sb-platform-header::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:2px;height:20px;border-radius:0 2px 2px 0;
+}
+.platform-web .sb-platform-header::before{background:var(--action-primary)}
+.platform-ios .sb-platform-header::before{background:#a855f7}
+.platform-android .sb-platform-header::before{background:#22c55e}
+
+.sb-platform-icon{
+  width:26px;height:26px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.platform-web .sb-platform-icon{background:rgba(52,133,247,.15)}
+.platform-ios .sb-platform-icon{background:rgba(168,85,247,.15)}
+.platform-android .sb-platform-icon{background:rgba(34,197,94,.15)}
+
+.sb-platform-name{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.platform-web .sb-platform-name{color:var(--action-primary)}
+.platform-ios .sb-platform-name{color:#a855f7}
+.platform-android .sb-platform-name{color:#22c55e}
+
+.sb-platform-toggle{
+  margin-left:auto;width:16px;height:16px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-tertiary);cursor:pointer;border-radius:3px;
+  transition:color var(--ease),background var(--ease),transform var(--ease);
+  flex-shrink:0;
+}
+.sb-platform-toggle:hover{color:var(--text-secondary);background:rgba(255,255,255,.06)}
+.sb-platform-toggle.collapsed{transform:rotate(-90deg)}
+
+.sb-sub-label{
+  font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.2);padding:8px 24px 3px 36px;
+}
+.sb-item.sub{padding-left:36px;font-size:12px}
+.sb-item.sub .sb-item-dot{width:3px;height:3px}
+.sb-platform-divider{height:1px;background:rgba(255,255,255,.05);margin:10px 16px}
+
+/* ─── STATUS BADGES ─── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:500;border-radius:999px;
+  white-space:nowrap;padding:0 8px;height:22px;border:1px solid transparent;
+}
+.badge.neutral{background:rgba(255,255,255,.08);color:var(--text-secondary);border-color:var(--border-0)}
+.badge.info{background:rgba(52,133,247,.12);color:#99c2ff;border-color:rgba(52,133,247,.3)}
+.badge.success{background:rgba(50,171,69,.12);color:var(--color-success);border-color:rgba(50,171,69,.3)}
+.badge.warning{background:rgba(246,173,63,.12);color:var(--color-warning);border-color:rgba(246,173,63,.3)}
+.badge.error{background:rgba(255,88,107,.12);color:var(--color-error);border-color:rgba(255,88,107,.3)}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ─── BUTTONS ─── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  font-family:var(--font);font-size:14px;font-weight:400;line-height:18px;
+  border:1px solid transparent;border-radius:4px;cursor:pointer;
+  transition:background var(--ease),border-color var(--ease),box-shadow var(--ease);
+  white-space:nowrap;outline:none;user-select:none;
+}
+.btn:focus-visible{box-shadow:0 0 0 2px var(--border-focus)}
+.btn.xs{height:20px;padding:0 6px;font-size:12px}
+.btn.sm{height:24px;padding:0 8px;font-size:13px}
+.btn.md{height:32px;padding:0 10px}
+.btn.lg{height:40px;padding:0 14px}
+.btn.primary{background:var(--action-primary);color:#fff}
+.btn.primary:hover{background:var(--action-hover)}
+.btn.primary:active{background:var(--action-hover);border-color:var(--border-focus)}
+.btn.secondary{background:transparent;color:var(--text-primary);border-color:var(--border-2)}
+.btn.secondary:hover{border-color:var(--border-default)}
+.btn.tertiary{background:var(--action-level-1);color:var(--text-primary)}
+.btn.tertiary:hover{background:var(--action-level-2)}
+.btn.ghost{background:transparent;color:var(--text-primary)}
+.btn.ghost:hover{background:var(--action-level-2)}
+.btn.danger{background:var(--action-destructive);color:#fff}
+.btn.danger:hover{background:var(--action-destr-hover)}
+.btn.primary:disabled,.btn.danger:disabled{background:var(--action-disabled);color:rgba(255,255,255,.4);cursor:not-allowed;pointer-events:none}
+.btn.secondary:disabled,.btn.ghost:disabled,.btn.tertiary:disabled{opacity:.38;cursor:not-allowed;pointer-events:none}
+.btn-spin{width:12px;height:12px;border:1.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ─── INPUT ─── */
+.field{display:flex;flex-direction:column;gap:0;width:100%}
+.field-label{font-size:12px;font-weight:500;color:var(--text-secondary);padding:0 0 5px 1px;letter-spacing:-.01em}
+.input-wrap{
+  display:flex;align-items:center;gap:6px;
+  background:transparent;
+  border:1px solid var(--border-2);border-radius:4px 4px 0 0;
+  transition:border-color var(--ease);
+}
+.input-wrap.md{height:32px;padding:0 10px}
+.input-wrap.sm{height:24px;padding:0 8px}
+.input-wrap:focus-within{border-color:var(--border-default)}
+.input-wrap:hover:not(.err):not(.warn){border-color:var(--border-3)}
+.input-wrap.err{border-color:var(--border-error)!important}
+.input-el{flex:1;background:transparent;border:none;outline:none;font-family:var(--font);font-size:14px;color:var(--text-primary);caret-color:var(--text-primary)}
+.input-el::placeholder{color:var(--text-tertiary)}
+.input-icon{color:var(--icon-secondary);display:flex;align-items:center}
+.input-helper{font-size:11px;color:var(--text-tertiary);padding:4px 2px 0;line-height:1.4}
+.input-helper.err{color:var(--color-error)}
+
+/* ─── CARD ─── */
+.viz-card{
+  background:var(--surface-2);border-radius:8px;
+  border:1px solid var(--border-0);display:flex;gap:4px;overflow:hidden;
+  transition:background var(--ease),border-color var(--ease);
+}
+.viz-card:hover{background:var(--surface-3);border-color:var(--border-1)}
+.card-indent{width:8px;flex-shrink:0}
+.card-body{flex:1;min-width:0;padding:10px 8px 10px 0;display:flex;flex-direction:column;gap:3px}
+.card-title{font-size:15px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-sub{font-size:12px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-ts{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--icon-tertiary)}
+.card-actions{display:flex;align-items:center;flex-shrink:0;gap:1px;padding-right:4px}
+.card-icon-btn{width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--icon-secondary);cursor:pointer;transition:background var(--ease),color var(--ease)}
+.card-icon-btn:hover{background:rgba(255,255,255,.1);color:var(--text-primary)}
+
+/* ─── MODAL ─── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:400;padding:24px;animation:fadeIn .15s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{background:var(--surface-3);border:1px solid var(--border-0);border-radius:12px;box-shadow:0 24px 64px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:hidden;animation:slideUp .2s ease-out;max-height:calc(100vh - 48px);width:100%}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-box.sm{max-width:360px}.modal-box.md{max-width:480px}.modal-box.lg{max-width:640px}
+.modal-head{display:flex;align-items:flex-start;gap:16px;padding:20px 22px;border-bottom:1px solid var(--border-0);flex-shrink:0}
+.modal-title{font-size:16px;font-weight:600;color:var(--text-primary);flex:1}
+.modal-desc{font-size:13px;color:var(--text-secondary);margin-top:4px;line-height:1.5}
+.modal-close{width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--icon-secondary);border-radius:6px;cursor:pointer;transition:background var(--ease),color var(--ease)}
+.modal-close:hover{background:rgba(255,255,255,.1);color:var(--text-primary)}
+.modal-body-content{padding:20px 22px;overflow-y:auto;flex:1;font-size:13px;color:var(--text-secondary);line-height:1.6}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border-0);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0}
+
+/* ─── DROPDOWN ─── */
+.dd-wrap{position:relative;display:flex;flex-direction:column;gap:0;width:200px}
+.dd-label{font-size:12px;font-weight:500;color:var(--text-secondary);padding:0 0 5px 1px}
+.dd-trigger{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:transparent;border:1px solid var(--border-2);
+  border-radius:4px 4px 0 0;height:32px;padding:0 10px;
+  font-size:14px;font-family:var(--font);color:var(--text-primary);cursor:pointer;
+  transition:border-color var(--ease);text-align:left;
+}
+.dd-trigger:hover{border-color:var(--border-3)}
+.dd-trigger.open{border-color:var(--border-default)}
+.dd-chevron{color:var(--icon-secondary);flex-shrink:0;transition:transform var(--ease)}
+.dd-chevron.up{transform:rotate(180deg)}
+.dd-menu{
+  position:absolute;top:100%;left:-1px;right:-1px;z-index:100;
+  background:var(--surface-3);border:1px solid var(--border-2);
+  border-top:none;border-radius:0 0 4px 4px;
+  list-style:none;padding:4px 0;
+  animation:menuIn .15s ease;overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+@keyframes menuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.dd-option{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  font-size:13px;color:var(--text-secondary);cursor:pointer;
+  transition:background var(--ease),color var(--ease);
+}
+.dd-option:hover{background:rgba(255,255,255,.07);color:var(--text-primary)}
+.dd-option.selected{color:var(--action-primary);background:rgba(52,133,247,.12)}
+.dd-check{margin-left:auto;color:var(--action-primary)}
+
+/* ─── TOAST ─── */
+.toast{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 14px;
+  background:var(--surface-3);border:1px solid var(--border-0);
+  border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);
+  animation:slideInR .2s ease-out;position:relative;overflow:hidden;width:100%;
+}
+@keyframes slideInR{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+.toast::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.toast.success::before{background:var(--color-success)}
+.toast.error::before{background:var(--color-error)}
+.toast.warning::before{background:var(--color-warning)}
+.toast.info::before{background:var(--color-info)}
+.toast-icon{flex-shrink:0;display:flex;margin-top:1px}
+.toast-content{flex:1;min-width:0}
+.toast-title{font-size:13px;font-weight:600;color:var(--text-primary);line-height:1.3}
+.toast-desc{font-size:12px;color:var(--text-secondary);margin-top:2px;line-height:1.3}
+.toast-close{flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);cursor:pointer;border-radius:4px;transition:background var(--ease),color var(--ease)}
+.toast-close:hover{background:rgba(255,255,255,.08);color:var(--text-secondary)}
+.toast-stack{display:flex;flex-direction:column;gap:8px;max-width:380px;width:100%}
+
+/* ─── TYPOGRAPHY SHOWCASE ─── */
+.type-scale{display:flex;flex-direction:column;border:1px solid var(--border-0);border-radius:8px;overflow:hidden}
+.type-row{display:grid;grid-template-columns:220px 1fr;gap:var(--s5);align-items:center;padding:16px 20px;border-bottom:1px solid var(--border-0)}
+.type-row:last-child{border-bottom:none}
+.type-row:hover{background:rgba(255,255,255,.02)}
+.type-meta{display:flex;flex-direction:column;gap:2px}
+.type-label{font-size:12px;font-weight:600;color:var(--text-primary)}
+.type-measure{font-family:var(--mono);font-size:10px;color:var(--action-primary)}
+.type-usage{font-size:11px;color:var(--text-tertiary);margin-top:2px}
+.type-sample{color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ─── SPACING VIZ ─── */
+.spacing-row{display:grid;grid-template-columns:160px 60px 1fr;align-items:center;gap:var(--s4);padding:10px 0;border-bottom:1px solid var(--border-0)}
+.spacing-row:first-child{border-top:1px solid var(--border-0)}
+.spacing-bar-fill{background:var(--action-primary);height:16px;border-radius:2px;opacity:.7;transition:opacity var(--ease);min-width:4px}
+.spacing-row:hover .spacing-bar-fill{opacity:1}
+
+/* ─── RADIUS VIZ ─── */
+.radius-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:var(--s3)}
+.radius-card{background:var(--surface-1);border:1px solid var(--border-0);border-radius:8px;padding:var(--s4);display:flex;flex-direction:column;align-items:center;gap:var(--s3);text-align:center}
+.radius-box{width:52px;height:52px;background:var(--action-primary);opacity:.7}
+
+/* ─── ICON GRID ─── */
+.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:2px}
+.icon-cell{background:var(--surface-1);display:flex;flex-direction:column;align-items:center;gap:7px;padding:16px 8px;transition:background var(--ease)}
+.icon-cell:hover{background:var(--surface-2)}
+.icon-name{font-family:var(--mono);font-size:9px;color:var(--text-tertiary);text-align:center;word-break:break-word;line-height:1.3}
+
+/* ─── OVERVIEW ─── */
+.ov-hero{
+  padding:var(--s9) var(--s8) var(--s8);
+  background:linear-gradient(135deg,var(--surface-1) 0%,var(--surface-page) 60%);
+  border-bottom:1px solid var(--border-0);
+}
+.ov-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(52,133,247,.1);border:1px solid rgba(52,133,247,.25);
+  border-radius:999px;padding:4px 12px;margin-bottom:var(--s5);
+  font-size:11px;font-weight:500;color:var(--action-primary);letter-spacing:.02em;
+}
+.ov-title{font-size:64px;font-weight:700;letter-spacing:-.04em;line-height:1;color:var(--text-primary);margin-bottom:var(--s5)}
+.ov-sub{font-size:17px;color:var(--text-secondary);line-height:1.65;max-width:560px;margin-bottom:var(--s7)}
+.ov-stats{display:flex;gap:var(--s7);border-top:1px solid var(--border-0);padding-top:var(--s6)}
+.ov-stat{display:flex;flex-direction:column;gap:4px}
+.ov-stat-num{font-size:28px;font-weight:700;color:var(--text-primary);letter-spacing:-.02em;line-height:1}
+.ov-stat-lbl{font-size:12px;color:var(--text-tertiary);font-weight:400}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--border-0)}
+.ov-card{
+  background:var(--surface-page);padding:var(--s6);
+  cursor:pointer;border:none;text-align:left;font-family:var(--font);
+  transition:background var(--ease);width:100%;
+}
+.ov-card:hover{background:var(--surface-1)}
+.ov-card-icon{font-size:24px;margin-bottom:var(--s4);display:block}
+.ov-card-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.ov-card-desc{font-size:13px;color:var(--text-tertiary);line-height:1.5}
+.ov-section-head{padding:var(--s7) var(--s8) var(--s5)}
+.ov-section-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:var(--s4)}
+.ov-section-title{font-size:26px;font-weight:600;letter-spacing:-.02em;color:var(--text-primary)}
+
+/* ─── NOTIFICATION BADGE ─── */
+.notif-badge{display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);font-size:11px;line-height:1;font-weight:400;white-space:nowrap;overflow:hidden}
+.notif-badge.nb-primary{background:var(--action-primary);color:#fff}
+.notif-badge.nb-secondary{background:var(--surface-3);color:var(--text-secondary)}
+.notif-badge.nb-sm{height:13px;padding:0 3px;border-radius:80px}
+.notif-badge.nb-md{height:16px;padding:0 4px;border-radius:80px}
+.notif-badge.nb-lg{height:20px;padding:0 8px;border-radius:80px}
+.notif-badge.sq{border-radius:4px}
+
+/* ─── CALLOUT ─── */
+.callout{
+  display:flex;gap:var(--s4);padding:var(--s4) var(--s5);
+  border-radius:6px;border-left:3px solid;margin:var(--s5) 0;
+}
+.callout.info{background:rgba(52,133,247,.06);border-left-color:var(--action-primary)}
+.callout.warning{background:rgba(246,173,63,.06);border-left-color:var(--color-warning)}
+.callout-icon{flex-shrink:0;font-size:15px;margin-top:1px}
+.callout-text{font-size:13px;color:var(--text-secondary);line-height:1.6}
+.callout-text strong{color:var(--text-primary);font-weight:600}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ══════════════════════════════════════════════════
+   NAV CONFIG
+══════════════════════════════════════════════════ */
+const PLATFORMS = [
+  {
+    id: 'web', label: 'Web', cls: 'platform-web',
+    icon: <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+      <rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+      <path d="M1 6h14" stroke="currentColor" strokeWidth="1.4"/>
+      <circle cx="3.5" cy="4.5" r=".8" fill="currentColor"/>
+      <circle cx="5.5" cy="4.5" r=".8" fill="currentColor"/>
+      <circle cx="7.5" cy="4.5" r=".8" fill="currentColor"/>
+    </svg>,
+    color: 'var(--action-primary)',
+    sections: [
+      { label: 'Foundation', items:[
+        { id:'colors',     label:'Colors' },
+        { id:'typography', label:'Typography' },
+        { id:'spacing',    label:'Spacing' },
+        { id:'icons',      label:'Iconography' },
+      ]},
+      { label: 'Components', items:[
+        { id:'button',   label:'Button' },
+        { id:'badge',    label:'Badge' },
+        { id:'input',    label:'Input' },
+        { id:'card',     label:'Card' },
+        { id:'modal',    label:'Modal' },
+        { id:'dropdown', label:'Dropdown' },
+        { id:'toast',    label:'Toast' },
+      ]},
+    ]
+  },
+  {
+    id: 'ios', label: 'iOS', cls: 'platform-ios',
+    icon: <svg width="12" height="13" viewBox="0 0 12 14" fill="none">
+      <path d="M9.5 0C9.5 0 9.7 2 8 3c-1.5.9-3 .4-3 .4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      <rect x="1" y="3.5" width="10" height="10" rx="2.5" stroke="currentColor" strokeWidth="1.4"/>
+      <path d="M4 13.5h4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+    </svg>,
+    color: '#a855f7',
+    sections: [
+      { label: 'Foundation', items:[
+        { id:'ios-colors',     label:'Colors' },
+        { id:'ios-typography', label:'Typography' },
+        { id:'ios-spacing',    label:'Spacing' },
+        { id:'ios-motion',     label:'Motion & Animation' },
+      ]},
+      { label: 'Components', items:[
+        { id:'ios-navbar',   label:'Navigation Bar' },
+        { id:'ios-tabbar',   label:'Tab Bar' },
+        { id:'ios-button',   label:'Button' },
+        { id:'ios-list',     label:'List & Cells' },
+        { id:'ios-sheet',    label:'Bottom Sheet' },
+        { id:'ios-alert',    label:'Alert & Action Sheet' },
+        { id:'ios-badge',    label:'Badge' },
+      ]},
+    ]
+  },
+  {
+    id: 'android', label: 'Android', cls: 'platform-android',
+    icon: <svg width="12" height="13" viewBox="0 0 12 14" fill="none">
+      <path d="M1.5 5.5C1.5 4.7 2.2 4 3 4h6c.8 0 1.5.7 1.5 1.5V11c0 .8-.7 1.5-1.5 1.5H3C2.2 12.5 1.5 11.8 1.5 11V5.5z" stroke="currentColor" strokeWidth="1.4"/>
+      <path d="M4 13h4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      <path d="M3 4L1.5 2M9 4L10.5 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      <circle cx="6" cy="8" r=".8" fill="currentColor"/>
+    </svg>,
+    color: '#22c55e',
+    sections: [
+      { label: 'Foundation', items:[
+        { id:'and-colors',     label:'Colors' },
+        { id:'and-typography', label:'Typography' },
+        { id:'and-spacing',    label:'Spacing' },
+        { id:'and-elevation',  label:'Elevation & Shadow' },
+      ]},
+      { label: 'Components', items:[
+        { id:'and-appbar',   label:'App Bar' },
+        { id:'and-bottomnav',label:'Bottom Navigation' },
+        { id:'and-button',   label:'Button' },
+        { id:'and-list',     label:'List & Items' },
+        { id:'and-dialog',   label:'Dialog' },
+        { id:'and-sheet',    label:'Bottom Sheet' },
+        { id:'and-snackbar', label:'Snackbar' },
+      ]},
+    ]
+  },
+];
+
+/* ══════════════════════════════════════════════════
+   SHELL
+══════════════════════════════════════════════════ */
+function Shell({ page, setPage }) {
+  const [collapsed, setCollapsed] = useState({ web: false, ios: true, android: true });
+  const toggle = id => setCollapsed(c => ({ ...c, [id]: !c[id] }));
+
+  const PAGES = {
+    overview:      OverviewPage,
+    colors:        ColorsPage,
+    typography:    TypographyPage,
+    spacing:       SpacingPage,
+    icons:         IconsPage,
+    button:        ButtonPage,
+    badge:         BadgePage,
+    input:         InputPage,
+    card:          CardPage,
+    modal:         ModalPage,
+    dropdown:      DropdownPage,
+    toast:         ToastPage,
+    // iOS stubs
+    'ios-colors':     PlatformStubPage,
+    'ios-typography': PlatformStubPage,
+    'ios-spacing':    PlatformStubPage,
+    'ios-motion':     PlatformStubPage,
+    'ios-navbar':     PlatformStubPage,
+    'ios-tabbar':     PlatformStubPage,
+    'ios-button':     PlatformStubPage,
+    'ios-list':       PlatformStubPage,
+    'ios-sheet':      PlatformStubPage,
+    'ios-alert':      PlatformStubPage,
+    'ios-badge':      PlatformStubPage,
+    // Android stubs
+    'and-colors':     PlatformStubPage,
+    'and-typography': PlatformStubPage,
+    'and-spacing':    PlatformStubPage,
+    'and-elevation':  PlatformStubPage,
+    'and-appbar':     PlatformStubPage,
+    'and-bottomnav':  PlatformStubPage,
+    'and-button':     PlatformStubPage,
+    'and-list':       PlatformStubPage,
+    'and-dialog':     PlatformStubPage,
+    'and-sheet':      PlatformStubPage,
+    'and-snackbar':   PlatformStubPage,
+  };
+  const Page = PAGES[page] || OverviewPage;
+
+  // Find which platform and section the active page belongs to
+  const activePlatform = PLATFORMS.find(p =>
+    p.sections.some(s => s.items.some(i => i.id === page))
+  );
+
+  return (
+    <div className="shell">
+      <aside className="sidebar">
+        {/* Wordmark — logo from Figma node 6103:27882 */}
+        <div className="sb-wordmark">
+          <div className="sb-logo-mark">
+            <svg className="sb-logo-img" viewBox="0 0 155 124" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M152.628 0C152.912 0.0850941 153.197 0.164914 153.478 0.257697C153.845 0.376445 154.163 0.578822 154.43 0.852848C155.034 1.47542 155.16 2.1807 154.798 2.96096C154.385 3.84795 153.965 4.73104 153.543 5.61466C152.052 8.75156 150.549 11.8837 149.068 15.0254C148.383 16.4806 147.34 17.6204 146.06 18.5863C143.754 20.3276 141.231 21.7006 138.602 22.8972C135.764 24.1885 132.838 25.2509 129.861 26.1754C126.08 27.3494 122.238 28.296 118.358 29.0979C114.318 29.932 110.249 30.5935 106.158 31.1305C104.001 31.4137 101.837 31.655 99.6689 31.8613C98.0272 32.0175 96.3865 32.1771 94.7409 32.2857C92.9953 32.4002 91.7142 30.9901 91.6644 29.6681C91.643 29.1032 91.74 28.5729 91.9644 28.0537C93.2295 25.1192 94.4858 22.1813 95.7464 19.2459C97.1612 15.9498 98.5775 12.6558 99.9928 9.35975C100.945 7.14301 101.894 4.92575 102.851 2.70997C103.38 1.48358 104.393 0.804285 105.61 0.3519C106.077 0.178832 106.58 0.165858 107.047 0H152.628ZM47.7915 0C47.9403 0.0841303 48.1096 0.076423 48.2715 0.101902C49.4741 0.299972 50.546 0.754277 51.408 1.63597C51.7935 2.02923 52.0613 2.48981 52.275 2.98787C54.1952 7.46846 56.113 11.9486 58.0343 16.4282C59.7052 20.3232 61.38 24.2173 63.052 28.1124C63.2139 28.4864 63.3393 28.8681 63.3662 29.2844C63.4915 31.1752 61.6986 32.5271 60.0374 32.278C59.1588 32.1463 58.264 32.1252 57.3771 32.0444C55.8994 31.9093 54.4196 31.7858 52.9453 31.6209C51.1909 31.4252 49.4414 31.2007 47.692 30.9719C45.0906 30.6305 42.5025 30.2051 39.9227 29.7354C36.8706 29.1777 33.8375 28.5354 30.8303 27.7749C26.9737 26.7985 23.1678 25.6615 19.4693 24.201C16.3377 22.9655 13.2983 21.5453 10.4823 19.6949C9.61684 19.1247 8.80113 18.4896 7.99224 17.8464C7.03846 17.0868 6.45546 16.0806 5.95784 15.0033C5.3158 13.611 4.64889 12.2313 3.9849 10.8486C2.72962 8.23238 1.46702 5.61805 0.210272 3.00037C-0.240518 2.05906 0.0483018 1.10814 0.934757 0.534122C1.35774 0.259614 1.84024 0.150956 2.30859 0H47.7915ZM60.6831 124C60.3854 123.848 60.0482 123.83 59.7363 123.725C58.2874 123.24 57.3015 122.299 56.6891 120.908C56.0039 119.352 55.2425 117.828 54.5071 116.292C53.1987 113.561 51.8834 110.832 50.575 108.102C49.8039 106.493 49.0406 104.88 48.2754 103.27C48.1348 102.975 47.9738 102.687 48.0484 102.336C48.2256 101.515 48.9772 101.134 49.7531 101.484C49.9498 101.571 50.1397 101.671 50.33 101.77C54.4124 103.907 58.7159 105.453 63.2043 106.511C65.4717 107.046 67.7596 107.463 70.0733 107.737C71.6131 107.92 73.1562 108.044 74.7053 108.139C76.919 108.276 79.1312 108.236 81.3415 108.189C82.8056 108.158 84.2683 108.008 85.7294 107.852C88.8724 107.516 91.968 106.945 95.0226 106.145C97.8209 105.412 100.552 104.485 103.199 103.318C103.892 103.012 104.581 102.694 105.269 102.377C105.773 102.144 106.249 102.189 106.639 102.577C107.032 102.969 107.057 103.452 106.833 103.943C106.555 104.552 106.264 105.158 105.975 105.764C105.095 107.61 104.209 109.454 103.332 111.303C102.203 113.685 101.081 116.069 99.9566 118.451C99.4602 119.501 98.9893 120.566 98.4525 121.597C97.8414 122.771 96.7931 123.421 95.5418 123.789C95.289 123.862 95.0182 123.868 94.7815 124H60.6831ZM77.2239 65.0378C75.5116 64.9236 73.7935 64.9862 72.0802 64.9236C70.3352 64.8605 68.5897 64.767 66.8491 64.6335C63.2486 64.3575 59.6616 63.9673 56.0932 63.4065C52.8011 62.8886 49.5349 62.243 46.3038 61.4308C42.8616 60.565 39.4804 59.5133 36.1902 58.187C33.0512 56.9218 30.0273 55.4341 27.228 53.5282C25.5186 52.3652 23.9584 51.0438 22.7193 49.3841C22.0121 48.4388 21.4077 47.4319 20.9139 46.3561C20.2457 44.9011 19.5326 43.4665 18.8404 42.0236C17.9509 40.1668 17.0599 38.311 16.1747 36.4523C15.8945 35.8631 15.9749 35.3712 16.3902 34.9685C16.7752 34.5975 17.2154 34.506 17.7047 34.7416C18.2082 34.9834 18.6947 35.2638 19.1919 35.5196C22.5648 37.2526 26.0645 38.6916 29.6539 39.9269C34.3668 41.549 39.1782 42.8069 44.0612 43.8152C47.4214 44.508 50.8027 45.0741 54.202 45.5299C56.1624 45.7924 58.1282 46.0131 60.0954 46.2179C61.4388 46.3571 62.7879 46.4404 64.1357 46.5416C65.3995 46.6365 66.6668 46.7121 67.9317 46.8143C70.0423 46.9872 71.5303 48.0794 72.475 49.9121C73.7788 52.4414 75.053 54.9832 76.3417 57.5192C76.4304 57.6936 76.5152 57.8738 76.6307 58.0304C77.1084 58.6755 77.939 58.6475 78.3455 57.9572C78.6267 57.4783 78.8685 56.9763 79.1044 56.4733C79.9199 54.7423 80.8148 53.0518 81.657 51.3357C81.9807 50.6752 82.258 49.992 82.6533 49.3681C83.6209 47.8462 85.0032 46.9704 86.8213 46.821C88.2836 46.7015 89.7492 46.6374 91.2115 46.5228C92.4915 46.4211 93.769 46.2776 95.0495 46.1644C96.5117 46.0352 97.9662 45.8498 99.4221 45.6739C101.551 45.4162 103.668 45.0891 105.782 44.7383C109.608 44.1029 113.396 43.2915 117.148 42.3217C122.056 41.0527 126.859 39.4783 131.504 37.4554C133.301 36.673 135.058 35.8043 136.779 34.8673C136.923 34.7892 137.068 34.7117 137.218 34.6423C137.75 34.3976 138.195 34.4578 138.589 34.8235C139.002 35.2108 139.105 35.6059 138.873 36.1546C138.632 36.7265 138.355 37.2834 138.089 37.8442C137.08 39.9707 136.101 42.1107 135.05 44.2146C134.496 45.3232 134.015 46.4713 133.353 47.5254C132.433 48.9909 131.295 50.27 129.989 51.4137C126.967 54.0625 123.484 55.9597 119.811 57.5539C114.971 59.6559 109.924 61.1012 104.774 62.2247C101.695 62.8963 98.5906 63.4185 95.4687 63.8362C93.8684 64.0506 92.2629 64.2274 90.6529 64.3715C88.8475 64.5333 87.0416 64.6687 85.2308 64.7699C83.4527 64.8692 81.6741 64.964 79.894 64.9491C79.002 64.9428 78.1169 65.0898 77.2239 65.0378ZM78.1166 93.7915C76.6811 93.8449 75.2489 93.7333 73.8188 93.6722C71.4845 93.5707 69.1566 93.3532 66.8365 93.0494C63.8597 92.6602 60.9122 92.126 58.0051 91.3939C53.6951 90.3093 49.5234 88.8585 45.59 86.8005C43.7998 85.8647 42.0603 84.8431 40.4948 83.5668C38.9199 82.2834 37.6354 80.7557 36.6353 79.0096C35.7313 77.4319 35.021 75.7593 34.2207 74.1324C33.7979 73.2744 33.3853 72.4121 32.9693 71.5513C32.716 71.0262 32.4651 70.5005 32.2118 69.974C31.9259 69.3811 31.9581 68.9567 32.3151 68.6443C32.6848 68.3204 33.1525 68.3266 33.7302 68.6624C34.9358 69.3611 36.158 70.0331 37.4157 70.6374C40.9599 72.3425 44.6338 73.7218 48.4133 74.8412C51.6833 75.8089 55.0049 76.5667 58.3636 77.1691C60.2765 77.513 62.2006 77.7844 64.1305 78.0143C65.6513 78.195 67.1745 78.3424 68.7007 78.4588C69.5039 78.5208 70.313 78.5513 71.1172 78.6023C73.7993 78.7717 76.4848 78.8151 79.1692 78.7583C80.4357 78.7311 81.7032 78.7016 82.9692 78.6105C83.6902 78.559 84.4155 78.5303 85.1388 78.4831C86.0259 78.4235 86.9124 78.3605 87.7961 78.2666C89.0401 78.1349 90.2837 77.9952 91.5239 77.8331C93.6492 77.5545 95.7594 77.204 97.8608 76.7914C101.762 76.0264 105.594 75.01 109.347 73.7137C113.259 72.3621 117.019 70.6851 120.589 68.6095C120.9 68.4277 121.201 68.2265 121.522 68.0639C121.977 67.834 122.396 67.895 122.707 68.2003C123.006 68.4936 123.07 68.8732 122.867 69.3187C122.532 70.0551 122.188 70.7896 121.837 71.5184C120.65 73.9865 119.458 76.4504 118.27 78.9176C117.834 79.8219 117.448 80.7491 116.94 81.62C116.019 83.1963 114.744 84.4215 113.169 85.3763C109.088 87.855 104.688 89.5982 100.089 90.9012C97.4093 91.661 94.6892 92.2414 91.939 92.6888C90.33 92.9506 88.7148 93.1676 87.0902 93.3193C85.7628 93.4443 84.435 93.5506 83.1017 93.6212C81.4411 93.709 79.7791 93.7715 78.1166 93.7915Z" fill="white"/>
+            </svg>
+          </div>
+          <div className="sb-logo-divider"/>
+          <div className="sb-logo-text">
+            <span className="sb-logo-name">Viz.ai</span>
+            <span className="sb-logo-sub">Design System</span>
+          </div>
+        </div>
+
+        {/* Home */}
+        <div style={{padding:'12px 8px 8px'}}>
+          <button
+            className={`sb-item${page === 'overview' ? ' active' : ''}`}
+            onClick={() => setPage('overview')}
+          >
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style={{flexShrink:0}}>
+              <path d="M1 7.5L7 2l6 5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M3 6v6h3V9h2v3h3V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Overview
+          </button>
+        </div>
+
+        <div className="sb-platform-divider" style={{margin:'4px 16px 6px'}}/>
+
+        {/* Platform sections */}
+        <nav className="sb-nav" style={{padding:'0 0 16px'}}>
+          {PLATFORMS.map(platform => (
+            <div key={platform.id} className={platform.cls} style={{marginBottom:'4px'}}>
+              {/* Platform header */}
+              <div className="sb-platform-header">
+                <div className="sb-platform-icon" style={{color: platform.color}}>
+                  {platform.icon}
+                </div>
+                <span className="sb-platform-name">{platform.label}</span>
+                <button
+                  className={`sb-platform-toggle${collapsed[platform.id] ? ' collapsed' : ''}`}
+                  onClick={() => toggle(platform.id)}
+                  aria-label={`${collapsed[platform.id] ? 'Expand' : 'Collapse'} ${platform.label}`}
+                >
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    <path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Sections + items */}
+              {!collapsed[platform.id] && platform.sections.map(section => (
+                <div key={section.label}>
+                  <p className="sb-sub-label">{section.label}</p>
+                  <ul className="sb-list">
+                    {section.items.map(item => (
+                      <li key={item.id}>
+                        <button
+                          className={`sb-item sub${page === item.id ? ' active' : ''}`}
+                          onClick={() => setPage(item.id)}
+                          style={page === item.id && activePlatform?.id === platform.id ? {
+                            borderLeftColor: platform.color,
+                            color: 'var(--text-primary)',
+                          } : {}}
+                        >
+                          <span className="sb-item-dot"/>
+                          {item.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+
+              {platform.id !== 'android' && (
+                <div className="sb-platform-divider"/>
+              )}
+            </div>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="sb-footer">
+          <a className="sb-figma-link" href="https://www.figma.com/design/rG6XYslmlcTAzgsAtDWziZ" target="_blank" rel="noreferrer">
+            <svg width="10" height="10" viewBox="0 0 38 57" fill="none">
+              <path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" fill="#1ABCFE"/>
+              <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 0 1-19 0z" fill="#0ACF83"/>
+              <path d="M19 0v19h9.5a9.5 9.5 0 0 0 0-19H19z" fill="#FF7262"/>
+              <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" fill="#F24E1E"/>
+              <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" fill="#A259FF"/>
+            </svg>
+            Figma source
+          </a>
+          <span className="sb-version">v1.0</span>
+        </div>
+      </aside>
+
+      <main className="main">
+        <Page setPage={setPage} page={page} />
+      </main>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   SHARED COMPONENTS
+══════════════════════════════════════════════════ */
+function PageHero({ eyebrow, title, desc, meta }) {
+  return (
+    <header className="page-hero">
+      {eyebrow && <p className="page-hero-eyebrow">{eyebrow}</p>}
+      <h1 className="page-hero-title">{title}</h1>
+      {desc && <p className="page-hero-desc">{desc}</p>}
+      {meta && (
+        <div className="page-hero-meta">
+          {meta.map(m => (
+            <div key={m.label} className="page-hero-meta-item">
+              <span className="page-hero-meta-label">{m.label}</span>
+              <span className="page-hero-meta-val">{m.val}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </header>
+  );
+}
+
+function Section({ title, desc, children }) {
+  return (
+    <section className="ds-section">
+      <div className="ds-section-header">
+        <h2 className="ds-section-title">{title}</h2>
+        {desc && <p className="ds-section-desc">{desc}</p>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Preview({ preview, code, dark }) {
+  const [tab, setTab] = useState('preview');
+  const [copied, setCopied] = useState(false);
+  const copy = () => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1600); };
+  return (
+    <div className="preview-wrap">
+      <div className="preview-bar">
+        <button className={`preview-tab${tab==='preview'?' active':''}`} onClick={() => setTab('preview')}>Preview</button>
+        <button className={`preview-tab${tab==='code'?' active':''}`} onClick={() => setTab('code')}>Code</button>
+      </div>
+      {tab === 'preview'
+        ? <div className={`preview-canvas${dark?' dark':''}`}>{preview}</div>
+        : <div className="code-block">
+            <div className="code-block-header">
+              <span className="code-block-lang">jsx</span>
+              <button className={`code-copy-btn${copied?' done':''}`} onClick={copy}>
+                {copied ? '✓ Copied' : 'Copy'}
+              </button>
+            </div>
+            <pre className="code-pre"><code>{code}</code></pre>
+          </div>
+      }
+    </div>
+  );
+}
+
+function PropsTable({ props }) {
+  return (
+    <div className="props-table-wrap">
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          {props.map(p => (
+            <tr key={p.name}>
+              <td><code className="prop-name">{p.name}</code></td>
+              <td><code className="prop-type">{p.type}</code></td>
+              <td><code className="prop-def">{p.default||'—'}</code></td>
+              <td>{p.desc}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function CodeBlock({ code, lang = 'css' }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1600); };
+  return (
+    <div className="code-block">
+      <div className="code-block-header">
+        <span className="code-block-lang">{lang}</span>
+        <button className={`code-copy-btn${copied?' done':''}`} onClick={copy}>{copied ? '✓ Copied' : 'Copy'}</button>
+      </div>
+      <pre className="code-pre"><code>{code}</code></pre>
+    </div>
+  );
+}
+
+function DoDont({ dos, donts }) {
+  return (
+    <div className="dodont">
+      <div className="do-card">
+        <p className="dodont-head">✓ Do</p>
+        <ul className="dodont-list">{dos.map((d,i) => <li key={i}>{d}</li>)}</ul>
+      </div>
+      <div className="dont-card">
+        <p className="dodont-head">✕ Don't</p>
+        <ul className="dodont-list">{donts.map((d,i) => <li key={i}>{d}</li>)}</ul>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   OVERVIEW PAGE
+══════════════════════════════════════════════════ */
+/* ── Device mockup SVGs ── */
+function BrowserMockup() {
+  return (
+    <svg viewBox="0 0 320 200" fill="none" style={{width:'100%',height:'100%',display:'block'}}>
+      {/* Browser chrome */}
+      <rect width="320" height="200" rx="10" fill="#1a1d24"/>
+      <rect width="320" height="28" rx="0" fill="#242833"/>
+      <rect width="320" height="28" rx="0" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="1"/>
+      <circle cx="14" cy="14" r="4" fill="#ff5f57"/>
+      <circle cx="26" cy="14" r="4" fill="#ffbd2e"/>
+      <circle cx="38" cy="14" r="4" fill="#28c840"/>
+      {/* URL bar */}
+      <rect x="56" y="8" width="180" height="12" rx="3" fill="#2c3039"/>
+      <text x="146" y="17.5" fontFamily="Inter,system-ui" fontSize="7" fill="#808496" textAnchor="middle">app.viz.ai</text>
+      {/* Content — left panel */}
+      <rect x="0" y="28" width="72" height="172" fill="#0f1117"/>
+      {/* Nav items in sidebar */}
+      {[42,56,70,84,98,112].map((y,i) => (
+        <rect key={i} x="8" y={y} width={i===0?48:36} height="6" rx="3" fill={i===0?'#3485f7':'#ffffff15'}/>
+      ))}
+      {/* Main content area */}
+      <rect x="72" y="28" width="248" height="172" fill="#1a1d24"/>
+      {/* Top bar in content */}
+      <rect x="72" y="28" width="248" height="22" fill="#242833"/>
+      <rect x="82" y="35" width="60" height="8" rx="2" fill="#2c3039"/>
+      <rect x="284" y="33" width="28" height="12" rx="3" fill="#3485f7"/>
+      {/* Case rows */}
+      {[60,80,100,120,140,160].map((y,i) => (
+        <g key={i}>
+          <rect x="80" y={y} width="232" height="16" rx="4" fill="#2c3039"/>
+          <rect x="84" y={y+4} width="3" height="8" rx="1" fill={['#3485f7','#ff586b','#32ab45','#f6ad3f','#3485f7','#808496'][i]}/>
+          <rect x="92" y={y+5} width={40+i*6} height="4" rx="2" fill="#3c4455"/>
+          <rect x={140+i*2} y={y+5} width="30" height="4" rx="2" fill="#2c3039"/>
+          <rect x="260" y={y+4} width="40" height="6" rx="3" fill={i===1?'rgba(255,88,107,.2)':i===2?'rgba(50,171,69,.2)':'rgba(52,133,247,.15)'}/>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function IPhoneMockup() {
+  return (
+    <svg viewBox="0 0 160 300" fill="none" style={{width:'100%',height:'100%',display:'block'}}>
+      {/* Phone body */}
+      <rect x="4" y="4" width="152" height="292" rx="22" fill="#1a1d24" stroke="rgba(255,255,255,.15)" strokeWidth="1.5"/>
+      {/* Dynamic Island */}
+      <rect x="54" y="12" width="52" height="12" rx="6" fill="#0f1117"/>
+      {/* Status bar icons */}
+      <text x="20" y="21" fontFamily="Inter" fontSize="6" fill="#c0c0c9">9:41</text>
+      <rect x="120" y="15" width="18" height="6" rx="2" fill="#32ab45"/>
+      {/* Screen content */}
+      {/* Header bar */}
+      <rect x="4" y="28" width="152" height="24" fill="#242833"/>
+      <rect x="12" y="35" width="50" height="8" rx="2" fill="#3485f7"/>
+      <rect x="132" y="34" width="16" height="10" rx="3" fill="#3485f7"/>
+      {/* Case cards */}
+      {[60,88,116,144,172,200].map((y,i) => (
+        <g key={i}>
+          <rect x="10" y={y} width="140" height="24" rx="5" fill="#2c3039"/>
+          <rect x="10" y={y} width="4" height="24" rx="2" fill={['#3485f7','#ff586b','#32ab45','#f6ad3f','#3485f7','#808496'][i]}/>
+          <rect x="20" y={y+5} width={50+i*5} height="4" rx="2" fill="#3c4455"/>
+          <rect x="20" y={y+13} width="35" height="3" rx="1" fill="#242833"/>
+          <rect x="116" y={y+7} width="28" height="8" rx="3" fill={i===1?'rgba(255,88,107,.25)':'rgba(52,133,247,.2)'}/>
+        </g>
+      ))}
+      {/* Bottom tab bar */}
+      <rect x="4" y="248" width="152" height="44" fill="#0f1117" rx="0"/>
+      <line x1="4" y1="248" x2="156" y2="248" stroke="rgba(255,255,255,.08)" strokeWidth="1"/>
+      {/* Tab icons */}
+      {[24,56,88,120].map((x,i) => (
+        <g key={i}>
+          <rect x={x} y="256" width="16" height="16" rx="3" fill={i===0?'rgba(52,133,247,.2)':'rgba(255,255,255,.04)'}/>
+          <rect x={x+3} y="275" width="10" height="3" rx="1" fill={i===0?'#3485f7':'#808496'}/>
+        </g>
+      ))}
+      {/* Home indicator */}
+      <rect x="60" y="288" width="40" height="3" rx="1.5" fill="rgba(255,255,255,.25)"/>
+    </svg>
+  );
+}
+
+function AndroidMockup() {
+  return (
+    <svg viewBox="0 0 160 300" fill="none" style={{width:'100%',height:'100%',display:'block'}}>
+      {/* Phone body — slightly squarer corners vs iOS */}
+      <rect x="4" y="4" width="152" height="292" rx="18" fill="#1a1d24" stroke="rgba(255,255,255,.15)" strokeWidth="1.5"/>
+      {/* Punch-hole camera */}
+      <circle cx="80" cy="16" r="5" fill="#0f1117"/>
+      {/* Status bar */}
+      <text x="14" y="22" fontFamily="Inter" fontSize="6" fill="#c0c0c9">9:41</text>
+      <rect x="116" y="15" width="18" height="5" rx="1.5" fill="#22c55e"/>
+      {/* App bar */}
+      <rect x="4" y="28" width="152" height="26" fill="#242833"/>
+      <rect x="14" y="34" width="8" height="8" rx="2" fill="#808496"/>
+      <rect x="28" y="36" width="48" height="5" rx="1.5" fill="#3c4455"/>
+      <rect x="130" y="34" width="18" height="12" rx="3" fill="#3485f7"/>
+      {/* Content */}
+      {[62,90,118,146,174,202].map((y,i) => (
+        <g key={i}>
+          <rect x="10" y={y} width="140" height="24" rx="4" fill="#2c3039"/>
+          <rect x="14" y={y+5} width={52+i*4} height="4" rx="2" fill="#3c4455"/>
+          <rect x="14" y={y+13} width="30" height="3" rx="1" fill="#242833"/>
+          <circle cx="138" cy={y+12} r="6" fill={i===1?'rgba(255,88,107,.3)':i===2?'rgba(50,171,69,.3)':'rgba(52,133,247,.25)'}/>
+        </g>
+      ))}
+      {/* Bottom nav bar */}
+      <rect x="4" y="248" width="152" height="48" fill="#0f1117"/>
+      <line x1="4" y1="248" x2="156" y2="248" stroke="rgba(255,255,255,.08)" strokeWidth="1"/>
+      {[28,64,96,132].map((x,i) => (
+        <g key={i}>
+          <rect x={x-8} y="258" width="16" height="16" rx="3" fill={i===0?'rgba(52,133,247,.2)':'rgba(255,255,255,.04)'}/>
+          <rect x={x-6} y="277" width="12" height="3" rx="1" fill={i===0?'#22c55e':'#808496'}/>
+        </g>
+      ))}
+      {/* Android nav gesture bar */}
+      <rect x="55" y="290" width="50" height="3" rx="1.5" fill="rgba(255,255,255,.2)"/>
+    </svg>
+  );
+}
+
+function OverviewPage({ setPage }) {
+  const platforms = [
+    {
+      id: 'web',
+      label: 'Web',
+      color: '#3485f7',
+      bg: 'rgba(52,133,247,.08)',
+      border: 'rgba(52,133,247,.2)',
+      desc: 'React-based clinical worklist and imaging platform. Responsive layout optimized for large-screen hospital workstations.',
+      stats: [
+        { n:'7', l:'Components' },
+        { n:'75', l:'Color tokens' },
+        { n:'4px', l:'Base radius' },
+      ],
+      items: ['colors','typography','button','card','modal'],
+      device: <BrowserMockup/>,
+      firstPage: 'colors',
+      aspect: '320/200',
+    },
+    {
+      id: 'ios',
+      label: 'iOS',
+      color: '#a855f7',
+      bg: 'rgba(168,85,247,.08)',
+      border: 'rgba(168,85,247,.2)',
+      desc: 'Native iPhone and iPad app for on-call radiologists. Optimized for one-handed use, alerts, and rapid case review.',
+      stats: [
+        { n:'7', l:'Components' },
+        { n:'75', l:'Color tokens' },
+        { n:'SF Pro', l:'System font' },
+      ],
+      items: ['ios-navbar','ios-tabbar','ios-button','ios-sheet','ios-list'],
+      device: <IPhoneMockup/>,
+      firstPage: 'ios-colors',
+      aspect: '160/300',
+    },
+    {
+      id: 'android',
+      label: 'Android',
+      color: '#22c55e',
+      bg: 'rgba(34,197,94,.08)',
+      border: 'rgba(34,197,94,.2)',
+      desc: 'Material-influenced Android application. Shares the Viz.ai dark design language with platform-native navigation patterns.',
+      stats: [
+        { n:'7', l:'Components' },
+        { n:'75', l:'Color tokens' },
+        { n:'Roboto', l:'System font' },
+      ],
+      items: ['and-appbar','and-bottomnav','and-button','and-dialog','and-list'],
+      device: <AndroidMockup/>,
+      firstPage: 'and-colors',
+      aspect: '160/300',
+    },
+  ];
+
+  const sharedFoundation = [
+    { icon:'🎨', label:'One color system', desc:'75 tokens from the Figma Component (Mapped) collection shared across all three platforms.' },
+    { icon:'✦', label:'One type scale', desc:'Body Semibold and Caption are canonical; platform fonts (SF Pro, Roboto) map to the same scale.' },
+    { icon:'⬡', label:'One icon library', desc:'Carbon Design System icons used on web, iOS, and Android at 12/16/20/24px sizes.' },
+    { icon:'◎', label:'One brand voice', desc:'Dark mode only. Action blue #3485f7 is the single primary interactive color across all platforms.' },
+  ];
+
+  return (
+    <div style={{minHeight:'100vh'}}>
+      {/* ── Hero ── */}
+      <div style={{
+        padding:'80px 72px 72px',
+        background:'linear-gradient(145deg,#0f1117 0%,#1a1d24 50%,#242833 100%)',
+        borderBottom:'1px solid rgba(255,255,255,.06)',
+        position:'relative',overflow:'hidden',
+      }}>
+        {/* Background grid */}
+        <div style={{
+          position:'absolute',inset:0,
+          backgroundImage:'linear-gradient(rgba(52,133,247,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(52,133,247,.04) 1px,transparent 1px)',
+          backgroundSize:'40px 40px',
+          pointerEvents:'none',
+        }}/>
+        {/* Viz.ai logo + wordmark */}
+        <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:'48px',position:'relative'}}>
+          <svg width="52" height="42" viewBox="0 0 155 124" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" clipRule="evenodd" d="M152.628 0C152.912 0.0850941 153.197 0.164914 153.478 0.257697C153.845 0.376445 154.163 0.578822 154.43 0.852848C155.034 1.47542 155.16 2.1807 154.798 2.96096C154.385 3.84795 153.965 4.73104 153.543 5.61466C152.052 8.75156 150.549 11.8837 149.068 15.0254C148.383 16.4806 147.34 17.6204 146.06 18.5863C143.754 20.3276 141.231 21.7006 138.602 22.8972C135.764 24.1885 132.838 25.2509 129.861 26.1754C126.08 27.3494 122.238 28.296 118.358 29.0979C114.318 29.932 110.249 30.5935 106.158 31.1305C104.001 31.4137 101.837 31.655 99.6689 31.8613C98.0272 32.0175 96.3865 32.1771 94.7409 32.2857C92.9953 32.4002 91.7142 30.9901 91.6644 29.6681C91.643 29.1032 91.74 28.5729 91.9644 28.0537C93.2295 25.1192 94.4858 22.1813 95.7464 19.2459C97.1612 15.9498 98.5775 12.6558 99.9928 9.35975C100.945 7.14301 101.894 4.92575 102.851 2.70997C103.38 1.48358 104.393 0.804285 105.61 0.3519C106.077 0.178832 106.58 0.165858 107.047 0H152.628ZM47.7915 0C47.9403 0.0841303 48.1096 0.076423 48.2715 0.101902C49.4741 0.299972 50.546 0.754277 51.408 1.63597C51.7935 2.02923 52.0613 2.48981 52.275 2.98787C54.1952 7.46846 56.113 11.9486 58.0343 16.4282C59.7052 20.3232 61.38 24.2173 63.052 28.1124C63.2139 28.4864 63.3393 28.8681 63.3662 29.2844C63.4915 31.1752 61.6986 32.5271 60.0374 32.278C59.1588 32.1463 58.264 32.1252 57.3771 32.0444C55.8994 31.9093 54.4196 31.7858 52.9453 31.6209C51.1909 31.4252 49.4414 31.2007 47.692 30.9719C45.0906 30.6305 42.5025 30.2051 39.9227 29.7354C36.8706 29.1777 33.8375 28.5354 30.8303 27.7749C26.9737 26.7985 23.1678 25.6615 19.4693 24.201C16.3377 22.9655 13.2983 21.5453 10.4823 19.6949C9.61684 19.1247 8.80113 18.4896 7.99224 17.8464C7.03846 17.0868 6.45546 16.0806 5.95784 15.0033C5.3158 13.611 4.64889 12.2313 3.9849 10.8486C2.72962 8.23238 1.46702 5.61805 0.210272 3.00037C-0.240518 2.05906 0.0483018 1.10814 0.934757 0.534122C1.35774 0.259614 1.84024 0.150956 2.30859 0H47.7915ZM60.6831 124C60.3854 123.848 60.0482 123.83 59.7363 123.725C58.2874 123.24 57.3015 122.299 56.6891 120.908C56.0039 119.352 55.2425 117.828 54.5071 116.292C53.1987 113.561 51.8834 110.832 50.575 108.102C49.8039 106.493 49.0406 104.88 48.2754 103.27C48.1348 102.975 47.9738 102.687 48.0484 102.336C48.2256 101.515 48.9772 101.134 49.7531 101.484C49.9498 101.571 50.1397 101.671 50.33 101.77C54.4124 103.907 58.7159 105.453 63.2043 106.511C65.4717 107.046 67.7596 107.463 70.0733 107.737C71.6131 107.92 73.1562 108.044 74.7053 108.139C76.919 108.276 79.1312 108.236 81.3415 108.189C82.8056 108.158 84.2683 108.008 85.7294 107.852C88.8724 107.516 91.968 106.945 95.0226 106.145C97.8209 105.412 100.552 104.485 103.199 103.318C103.892 103.012 104.581 102.694 105.269 102.377C105.773 102.144 106.249 102.189 106.639 102.577C107.032 102.969 107.057 103.452 106.833 103.943C106.555 104.552 106.264 105.158 105.975 105.764C105.095 107.61 104.209 109.454 103.332 111.303C102.203 113.685 101.081 116.069 99.9566 118.451C99.4602 119.501 98.9893 120.566 98.4525 121.597C97.8414 122.771 96.7931 123.421 95.5418 123.789C95.289 123.862 95.0182 123.868 94.7815 124H60.6831ZM77.2239 65.0378C75.5116 64.9236 73.7935 64.9862 72.0802 64.9236C70.3352 64.8605 68.5897 64.767 66.8491 64.6335C63.2486 64.3575 59.6616 63.9673 56.0932 63.4065C52.8011 62.8886 49.5349 62.243 46.3038 61.4308C42.8616 60.565 39.4804 59.5133 36.1902 58.187C33.0512 56.9218 30.0273 55.4341 27.228 53.5282C25.5186 52.3652 23.9584 51.0438 22.7193 49.3841C22.0121 48.4388 21.4077 47.4319 20.9139 46.3561C20.2457 44.9011 19.5326 43.4665 18.8404 42.0236C17.9509 40.1668 17.0599 38.311 16.1747 36.4523C15.8945 35.8631 15.9749 35.3712 16.3902 34.9685C16.7752 34.5975 17.2154 34.506 17.7047 34.7416C18.2082 34.9834 18.6947 35.2638 19.1919 35.5196C22.5648 37.2526 26.0645 38.6916 29.6539 39.9269C34.3668 41.549 39.1782 42.8069 44.0612 43.8152C47.4214 44.508 50.8027 45.0741 54.202 45.5299C56.1624 45.7924 58.1282 46.0131 60.0954 46.2179C61.4388 46.3571 62.7879 46.4404 64.1357 46.5416C65.3995 46.6365 66.6668 46.7121 67.9317 46.8143C70.0423 46.9872 71.5303 48.0794 72.475 49.9121C73.7788 52.4414 75.053 54.9832 76.3417 57.5192C76.4304 57.6936 76.5152 57.8738 76.6307 58.0304C77.1084 58.6755 77.939 58.6475 78.3455 57.9572C78.6267 57.4783 78.8685 56.9763 79.1044 56.4733C79.9199 54.7423 80.8148 53.0518 81.657 51.3357C81.9807 50.6752 82.258 49.992 82.6533 49.3681C83.6209 47.8462 85.0032 46.9704 86.8213 46.821C88.2836 46.7015 89.7492 46.6374 91.2115 46.5228C92.4915 46.4211 93.769 46.2776 95.0495 46.1644C96.5117 46.0352 97.9662 45.8498 99.4221 45.6739C101.551 45.4162 103.668 45.0891 105.782 44.7383C109.608 44.1029 113.396 43.2915 117.148 42.3217C122.056 41.0527 126.859 39.4783 131.504 37.4554C133.301 36.673 135.058 35.8043 136.779 34.8673C136.923 34.7892 137.068 34.7117 137.218 34.6423C137.75 34.3976 138.195 34.4578 138.589 34.8235C139.002 35.2108 139.105 35.6059 138.873 36.1546C138.632 36.7265 138.355 37.2834 138.089 37.8442C137.08 39.9707 136.101 42.1107 135.05 44.2146C134.496 45.3232 134.015 46.4713 133.353 47.5254C132.433 48.9909 131.295 50.27 129.989 51.4137C126.967 54.0625 123.484 55.9597 119.811 57.5539C114.971 59.6559 109.924 61.1012 104.774 62.2247C101.695 62.8963 98.5906 63.4185 95.4687 63.8362C93.8684 64.0506 92.2629 64.2274 90.6529 64.3715C88.8475 64.5333 87.0416 64.6687 85.2308 64.7699C83.4527 64.8692 81.6741 64.964 79.894 64.9491C79.002 64.9428 78.1169 65.0898 77.2239 65.0378ZM78.1166 93.7915C76.6811 93.8449 75.2489 93.7333 73.8188 93.6722C71.4845 93.5707 69.1566 93.3532 66.8365 93.0494C63.8597 92.6602 60.9122 92.126 58.0051 91.3939C53.6951 90.3093 49.5234 88.8585 45.59 86.8005C43.7998 85.8647 42.0603 84.8431 40.4948 83.5668C38.9199 82.2834 37.6354 80.7557 36.6353 79.0096C35.7313 77.4319 35.021 75.7593 34.2207 74.1324C33.7979 73.2744 33.3853 72.4121 32.9693 71.5513C32.716 71.0262 32.4651 70.5005 32.2118 69.974C31.9259 69.3811 31.9581 68.9567 32.3151 68.6443C32.6848 68.3204 33.1525 68.3266 33.7302 68.6624C34.9358 69.3611 36.158 70.0331 37.4157 70.6374C40.9599 72.3425 44.6338 73.7218 48.4133 74.8412C51.6833 75.8089 55.0049 76.5667 58.3636 77.1691C60.2765 77.513 62.2006 77.7844 64.1305 78.0143C65.6513 78.195 67.1745 78.3424 68.7007 78.4588C69.5039 78.5208 70.313 78.5513 71.1172 78.6023C73.7993 78.7717 76.4848 78.8151 79.1692 78.7583C80.4357 78.7311 81.7032 78.7016 82.9692 78.6105C83.6902 78.559 84.4155 78.5303 85.1388 78.4831C86.0259 78.4235 86.9124 78.3605 87.7961 78.2666C89.0401 78.1349 90.2837 77.9952 91.5239 77.8331C93.6492 77.5545 95.7594 77.204 97.8608 76.7914C101.762 76.0264 105.594 75.01 109.347 73.7137C113.259 72.3621 117.019 70.6851 120.589 68.6095C120.9 68.4277 121.201 68.2265 121.522 68.0639C121.977 67.834 122.396 67.895 122.707 68.2003C123.006 68.4936 123.07 68.8732 122.867 69.3187C122.532 70.0551 122.188 70.7896 121.837 71.5184C120.65 73.9865 119.458 76.4504 118.27 78.9176C117.834 79.8219 117.448 80.7491 116.94 81.62C116.019 83.1963 114.744 84.4215 113.169 85.3763C109.088 87.855 104.688 89.5982 100.089 90.9012C97.4093 91.661 94.6892 92.2414 91.939 92.6888C90.33 92.9506 88.7148 93.1676 87.0902 93.3193C85.7628 93.4443 84.435 93.5506 83.1017 93.6212C81.4411 93.709 79.7791 93.7715 78.1166 93.7915Z" fill="white"/>
+          </svg>
+          <div style={{display:'flex',flexDirection:'column',gap:3}}>
+            <span style={{fontSize:'22px',fontWeight:700,color:'white',letterSpacing:'-.02em',lineHeight:1}}>Viz.ai</span>
+            <span style={{fontSize:'10px',fontWeight:600,color:'rgba(255,255,255,.4)',textTransform:'uppercase',letterSpacing:'.14em'}}>Design System</span>
+          </div>
+        </div>
+
+        {/* Release badge */}
+        <div style={{
+          display:'inline-flex',alignItems:'center',gap:7,
+          background:'rgba(52,133,247,.1)',border:'1px solid rgba(52,133,247,.2)',
+          borderRadius:'999px',padding:'5px 14px',marginBottom:'24px',
+          fontSize:'11px',fontWeight:500,color:'#3485f7',letterSpacing:'.03em',
+          position:'relative',
+        }}>
+          <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
+          v1.0 · May 2026 · Dark mode only
+        </div>
+
+        <h1 style={{
+          fontSize:'clamp(44px,5vw,72px)',fontWeight:700,
+          letterSpacing:'-.04em',lineHeight:1,
+          color:'var(--text-primary)',marginBottom:'24px',
+          position:'relative',
+        }}>
+          One design language.<br/>
+          <span style={{color:'var(--action-primary)'}}>Three platforms.</span>
+        </h1>
+
+        <p style={{
+          fontSize:'18px',color:'var(--text-secondary)',lineHeight:1.7,
+          maxWidth:'560px',marginBottom:'56px',fontWeight:400,position:'relative',
+        }}>
+          The Viz.ai Design System powers the clinical platform across web,
+          iOS, and Android — sharing a single token set, icon library,
+          and brand voice.
+        </p>
+
+        {/* Platform cards */}
+        <div style={{
+          display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:'16px',
+          position:'relative',
+        }}>
+          {platforms.map(p => (
+            <div key={p.id} style={{
+              background:p.bg,border:`1px solid ${p.border}`,
+              borderRadius:'12px',overflow:'hidden',
+              display:'flex',flexDirection:'column',
+            }}>
+              {/* Device frame */}
+              <div style={{
+                padding: p.id==='web' ? '24px 24px 0' : '24px 40px 0',
+                display:'flex',justifyContent:'center',
+                minHeight: p.id==='web' ? '160px' : '200px',
+                alignItems:'flex-end',
+              }}>
+                <div style={{
+                  width:'100%',
+                  maxWidth: p.id==='web' ? '100%' : '140px',
+                }}>
+                  {p.device}
+                </div>
+              </div>
+
+              {/* Info */}
+              <div style={{padding:'20px 24px 24px',flex:1}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:'8px'}}>
+                  <span style={{
+                    fontSize:'11px',fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',
+                    color:p.color,
+                  }}>{p.label}</span>
+                  <span style={{
+                    fontSize:'9px',fontWeight:600,letterSpacing:'.08em',textTransform:'uppercase',
+                    color:p.color,background:`${p.bg}`,border:`1px solid ${p.border}`,
+                    borderRadius:'999px',padding:'1px 6px',
+                  }}>
+                    {p.id==='web'?'Browser':p.id==='ios'?'iPhone · iPad':'Phone · Tablet'}
+                  </span>
+                </div>
+                <p style={{fontSize:'13px',color:'var(--text-secondary)',lineHeight:1.6,marginBottom:'16px'}}>{p.desc}</p>
+                <div style={{display:'flex',gap:'20px',paddingTop:'16px',borderTop:`1px solid ${p.border}`}}>
+                  {p.stats.map(s => (
+                    <div key={s.l}>
+                      <p style={{fontSize:'16px',fontWeight:700,color:'var(--text-primary)',letterSpacing:'-.01em'}}>{s.n}</p>
+                      <p style={{fontSize:'10px',color:'var(--text-tertiary)',marginTop:'1px'}}>{s.l}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA */}
+              <button
+                onClick={() => setPage(p.firstPage)}
+                style={{
+                  margin:'0 24px 24px',padding:'9px 0',borderRadius:'6px',
+                  background:p.bg,border:`1px solid ${p.border}`,
+                  color:p.color,fontSize:'13px',fontWeight:500,cursor:'pointer',
+                  display:'flex',alignItems:'center',justifyContent:'center',gap:6,
+                  transition:'background .15s ease',fontFamily:'var(--font)',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background=`${p.border}`}
+                onMouseLeave={e => e.currentTarget.style.background=p.bg}
+              >
+                Explore {p.label}
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Shared foundation ── */}
+      <div style={{padding:'64px 72px',borderBottom:'1px solid rgba(255,255,255,.06)'}}>
+        <p style={{fontSize:'10px',fontWeight:600,letterSpacing:'.14em',textTransform:'uppercase',color:'var(--text-tertiary)',marginBottom:'12px'}}>Shared across all platforms</p>
+        <h2 style={{fontSize:'28px',fontWeight:700,letterSpacing:'-.02em',color:'var(--text-primary)',marginBottom:'40px'}}>One foundation, every surface.</h2>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'2px',borderRadius:'8px',overflow:'hidden'}}>
+          {sharedFoundation.map(f => (
+            <div key={f.label} style={{background:'var(--surface-1)',padding:'28px 24px'}}>
+              <span style={{fontSize:'22px',display:'block',marginBottom:'14px'}}>{f.icon}</span>
+              <p style={{fontSize:'13px',fontWeight:600,color:'var(--text-primary)',marginBottom:'6px'}}>{f.label}</p>
+              <p style={{fontSize:'12px',color:'var(--text-tertiary)',lineHeight:1.6}}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Platform quick links ── */}
+      <div style={{padding:'64px 72px'}}>
+        <p style={{fontSize:'10px',fontWeight:600,letterSpacing:'.14em',textTransform:'uppercase',color:'var(--text-tertiary)',marginBottom:'32px'}}>Browse by platform</p>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'2px',borderRadius:'8px',overflow:'hidden'}}>
+          {platforms.map(p => (
+            <div key={p.id} style={{background:'var(--surface-1)',padding:'32px 28px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:'20px'}}>
+                <span style={{fontSize:'11px',fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:p.color}}>{p.label}</span>
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:'2px'}}>
+                {p.items.map(itemId => {
+                  const allItems = platforms.find(pl=>pl.id===p.id)?.items||[];
+                  const label = PLATFORMS.find(pl=>pl.id===p.id)
+                    ?.sections.flatMap(s=>s.items)
+                    .find(i=>i.id===itemId)?.label || itemId;
+                  return (
+                    <button key={itemId}
+                      onClick={() => setPage(itemId)}
+                      style={{
+                        display:'flex',alignItems:'center',justifyContent:'space-between',
+                        padding:'8px 10px',borderRadius:'6px',
+                        background:'transparent',border:'none',cursor:'pointer',
+                        color:'var(--text-secondary)',fontSize:'13px',fontFamily:'var(--font)',
+                        textAlign:'left',transition:'background .12s ease,color .12s ease',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,.04)'; e.currentTarget.style.color='var(--text-primary)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='var(--text-secondary)'; }}
+                    >
+                      {label}
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   PLATFORM STUB PAGE (iOS + Android placeholders)
+══════════════════════════════════════════════════ */
+function PlatformStubPage({ page }) {
+  const platform = PLATFORMS.find(p =>
+    p.sections.some(s => s.items.some(i => i.id === page))
+  );
+  const section = platform?.sections.flatMap(s=>s.items).find(i=>i.id===page);
+  const platformLabel = platform?.label || 'Platform';
+  const itemLabel = section?.label || page;
+  const color = platform?.id==='ios' ? '#a855f7' : platform?.id==='android' ? '#22c55e' : '#3485f7';
+  const bg = platform?.id==='ios' ? 'rgba(168,85,247,.08)' : platform?.id==='android' ? 'rgba(34,197,94,.08)' : 'rgba(52,133,247,.08)';
+  const border = platform?.id==='ios' ? 'rgba(168,85,247,.2)' : platform?.id==='android' ? 'rgba(34,197,94,.2)' : 'rgba(52,133,247,.2)';
+
+  return (
+    <div>
+      <PageHero
+        eyebrow={platformLabel}
+        title={itemLabel}
+        desc={`${platformLabel} ${itemLabel} component documentation coming soon. The ${platformLabel} platform shares the same token foundation as Web — colors, spacing, and icons are identical.`}
+      />
+      <div className="page-content">
+        <div style={{
+          display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+          padding:'80px 40px',textAlign:'center',
+          background:bg,border:`1px solid ${border}`,borderRadius:'12px',
+          gap:'16px',
+        }}>
+          <span style={{fontSize:'40px'}}>
+            {platform?.id==='ios' ? '🍎' : platform?.id==='android' ? '🤖' : '🌐'}
+          </span>
+          <p style={{fontSize:'20px',fontWeight:600,color:'var(--text-primary)',letterSpacing:'-.01em'}}>
+            {platformLabel} documentation in progress
+          </p>
+          <p style={{fontSize:'14px',color:'var(--text-secondary)',maxWidth:'440px',lineHeight:1.7}}>
+            The {platformLabel} design system shares the same 75 color tokens, icon library, and
+            design principles as the Web system. Platform-specific component specs and guidelines
+            will be published here.
+          </p>
+          <div style={{
+            display:'flex',gap:'12px',flexWrap:'wrap',justifyContent:'center',marginTop:'8px',
+          }}>
+            {['Colors','Typography','Spacing','Icons'].map(t => (
+              <span key={t} style={{
+                padding:'6px 16px',borderRadius:'999px',fontSize:'12px',fontWeight:500,
+                background:bg,border:`1px solid ${border}`,color:color,
+              }}>{t}</span>
+            ))}
+          </div>
+        </div>
+
+        <Section title="Shared with Web" desc="These foundations are identical across all platforms — they pull from the same Figma Component (Mapped) token collection.">
+          <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'2px',borderRadius:'8px',overflow:'hidden'}}>
+            {[
+              {icon:'🎨',t:'Colors',d:'All 75 variables from Colors/Surface, Text, Icons, Actions, Borders'},
+              {icon:'⬡',t:'Iconography',d:'Carbon Design System icon set at 12/16/20/24px'},
+              {icon:'⬜',t:'Spacing',d:'Same token scale — spacing/2 through spacing/80'},
+              {icon:'✦',t:'Type scale',d:'Same size scale; platform uses its native system font'},
+            ].map(c => (
+              <div key={c.t} style={{background:'var(--surface-1)',padding:'24px'}}>
+                <span style={{fontSize:'20px',display:'block',marginBottom:'10px'}}>{c.icon}</span>
+                <p style={{fontSize:'13px',fontWeight:600,color:'var(--text-primary)',marginBottom:'4px'}}>{c.t}</p>
+                <p style={{fontSize:'12px',color:'var(--text-tertiary)',lineHeight:1.6}}>{c.d}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   COLORS PAGE
+══════════════════════════════════════════════════ */
+const COLOR_DATA = [
+  { group:'Surface', desc:'Background layers from deepest to highest. Always layer surfaces in order: page → 1 → 2 → 3.', colors:[
+    { label:'page',               hex:'#1a1d24',   token:'Colors/Surface/page',             desc:'Page background' },
+    { label:'surface 1 dark',     hex:'#242833',   token:'Colors/Surface/surface 1 dark',   desc:'Left nav, drawers' },
+    { label:'surface 2 main',     hex:'#2c3039',   token:'Colors/Surface/surface 2 main',   desc:'Cards, tables' },
+    { label:'surface 3 zodiac',   hex:'#3c4455',   token:'Colors/Surface/surface 3 zodiac', desc:'Popups, modals' },
+    { label:'hover-subtle-tuna',  hex:'#363a44',   token:'Colors/Surface/hover-subtle-tuna',desc:'Row hover' },
+    { label:'bg-card-pickled',    hex:'#303a50',   token:'Colors/Surface/bg-card-pickled-blue-950', desc:'Blue card variant' },
+    { label:'surface 3 accent',   hex:'#364a6d',   token:'Colors/Surface/surface 3 accent rhino', desc:'Accent popover' },
+    { label:'accent 600',         hex:'#49689d',   token:'Colors/Surface/accent-surface-600-queen', desc:'Accent blue surface' },
+    { label:'inverted',           hex:'#f3f4f5',   token:'Colors/Surface/inverted',         desc:'Light surfaces' },
+    { label:'viewer',             hex:'#000000',   token:'Colors/Surface/Viewer',           desc:'Imaging viewer' },
+    { label:'error surface',      hex:'#ff586b66', token:'Colors/Surface/Error',            desc:'Error tint' },
+    { label:'warning surface',    hex:'#f6ad3f66', token:'Colors/Surface/Warning',          desc:'Warning tint' },
+    { label:'darken bg',          hex:'#00000080', token:'Colors/Surface/Darken bg',        desc:'Modal scrim' },
+    { label:'20% neutral',        hex:'#ffffff33', token:'Colors/Surface/20%-neutral',      desc:'Neutral overlay' },
+  ]},
+  { group:'Text', desc:'Always use token names — never raw hex. Text/action is #3485f7, the same blue as button fills.', colors:[
+    { label:'primary',         hex:'#f3f4f5', token:'Colors/Text/primary',         desc:'Body & headings' },
+    { label:'secondary',       hex:'#c0c0c9', token:'Colors/Text/secondary',       desc:'Supporting text' },
+    { label:'disabled',        hex:'#808496', token:'Colors/Text/disabled',        desc:'Disabled & fine print' },
+    { label:'placeholder',     hex:'#808496', token:'Colors/Text/placeholder',     desc:'Input placeholder' },
+    { label:'action',          hex:'#3485f7', token:'Colors/Text/action',          desc:'Links, interactive labels' },
+    { label:'action-hover',    hex:'#0066ff', token:'Colors/Text/action-hover',    desc:'Hovered links' },
+    { label:'action-selected', hex:'#99c2ff', token:'Colors/Text/action-selected', desc:'Active / selected' },
+    { label:'information',     hex:'#99c2ff', token:'Colors/Text/information',     desc:'Info labels' },
+    { label:'success',         hex:'#32ab45', token:'Colors/Text/success',         desc:'Success feedback' },
+    { label:'error',           hex:'#ff586b', token:'Colors/Text/error',           desc:'Error messages' },
+    { label:'warning',         hex:'#f6ad3f', token:'Colors/Text/warning',         desc:'Warning messages' },
+    { label:'inverted',        hex:'#1a1d24', token:'Colors/Text/Inverted',        desc:'Text on light bg' },
+  ]},
+  { group:'Icons', desc:'Icon fill colors. Icons/secondary is the default icon color for most UI contexts.', colors:[
+    { label:'primary',        hex:'#f3f4f5', token:'Colors/Icons/primary',        desc:'Primary icons' },
+    { label:'secondary',      hex:'#c0c0c9', token:'Colors/Icons/secondary',      desc:'Default icon fill' },
+    { label:'tertiary',       hex:'#a3a6b5', token:'Colors/Icons/tertiary',       desc:'Subtle / inactive' },
+    { label:'disabled',       hex:'#808496', token:'Colors/Icons/disabled',       desc:'Disabled icon' },
+    { label:'info',           hex:'#3485f7', token:'Colors/Icons/info',           desc:'Info (= action blue)' },
+    { label:'success',        hex:'#32ab45', token:'Colors/Icons/success',        desc:'Success icon' },
+    { label:'error',          hex:'#ff586b', token:'Colors/Icons/error',          desc:'Error icon' },
+    { label:'warning',        hex:'#f6ad3f', token:'Colors/Icons/warning',        desc:'Warning icon' },
+    { label:'AI',             hex:'#a6a5ff', token:'Colors/Icons/AI',             desc:'AI feature icons' },
+    { label:'icon-important', hex:'#fada95', token:'Colors/Icons/icon-important', desc:'Non-important flag' },
+    { label:'inverted',       hex:'#242833', token:'Colors/Icons/inverted',       desc:'Icon on light bg' },
+  ]},
+  { group:'Actions', desc:'Interactive state fills. Levels 1–4 are rgba white overlays used for secondary/tertiary/ghost states.', colors:[
+    { label:'primary default',    hex:'#3485f7',   token:'Colors/Actions/action-primary-default',    desc:'Primary btn default' },
+    { label:'primary hover',      hex:'#0066ff',   token:'Colors/Actions/action-primary-hover-main', desc:'Primary hover + active bg' },
+    { label:'primary selected',   hex:'#99c2ff',   token:'Colors/Actions/action-primary-selected',   desc:'Selected state' },
+    { label:'level 1',            hex:'#ffffff0d', token:'Colors/Actions/level 1',                   desc:'Tertiary default (5%)' },
+    { label:'level 2',            hex:'#ffffff1a', token:'Colors/Actions/level 2',                   desc:'Tertiary hover (10%)' },
+    { label:'level 3',            hex:'#ffffff33', token:'Colors/Actions/level 3',                   desc:'Ghost active (20%)' },
+    { label:'level 4',            hex:'#ffffff4d', token:'Colors/Actions/level 4',                   desc:'(30%)' },
+    { label:'destrcutive',        hex:'#ff586b',   token:'Colors/Actions/destrcutive',               desc:'Destructive btn' },
+    { label:'destrcutive hover',  hex:'#ff453a',   token:'Colors/Actions/destrcutive- hover',        desc:'Destructive hover' },
+    { label:'destrcutive 2nd',    hex:'#ff586b66', token:'Colors/Actions/destrcutive secondary',     desc:'Destructive dim' },
+    { label:'warning',            hex:'#f6ad3f99', token:'Colors/Actions/warning',                   desc:'Warning action' },
+    { label:'warning secondary',  hex:'#f6ad3f66', token:'Colors/Actions/warning secondary',         desc:'Warning dim' },
+    { label:'disabled',           hex:'#5a606d',   token:'Colors/Actions/disabled',                  desc:'Disabled filled' },
+  ]},
+  { group:'Borders', desc:'Border scale 0→3: most subtle to strongest. border-default is a solid grey used for focused inputs and secondary button hover.', colors:[
+    { label:'border-level 0',      hex:'#ffffff1a', token:'Colors/borders/border-level 0',     desc:'Subtle (10%)' },
+    { label:'border-level 1',      hex:'#ffffff33', token:'Colors/borders/border-level 1',     desc:'Mid (20%)' },
+    { label:'border-level 2',      hex:'#ffffff4d', token:'Colors/borders/border-level 2',     desc:'Default input (30%)' },
+    { label:'border-level 3',      hex:'#ffffff66', token:'Colors/borders/border-level 3',     desc:'Active/pressed (40%)' },
+    { label:'border-default',      hex:'#a3a6b5',  token:'Colors/borders/border-default',     desc:'Containers, secondary hover' },
+    { label:'border-focus',        hex:'#5ca3ff',  token:'Colors/borders/border-focus',       desc:'Focus ring' },
+    { label:'border action accent',hex:'#0066ff',  token:'Colors/borders/border action accent',desc:'Action accent' },
+    { label:'error border',        hex:'#ff586b66',token:'Colors/borders/error',              desc:'Error border (40%)' },
+    { label:'warning border',      hex:'#f6ad3f66',token:'Colors/borders/warning',            desc:'Warning border (40%)' },
+    { label:'success border',      hex:'#0b7e1d',  token:'Colors/borders/success',            desc:'Success — solid' },
+    { label:'info border',         hex:'#0858d2',  token:'Colors/borders/information',        desc:'Info — solid' },
+    { label:'divider-table',       hex:'#000000b2',token:'Colors/borders/divider-table',      desc:'Table rows (70% black)' },
+  ]},
+];
+
+const GREY_RAMP = [
+  {n:'50', hex:'#f3f4f5'},{n:'100',hex:'#c0c0c9'},{n:'200',hex:'#a3a6b5'},
+  {n:'300',hex:'#808496'},{n:'400',hex:'#5a606d'},{n:'500',hex:'#474c57'},
+  {n:'600',hex:'#3c4455'},{n:'700',hex:'#2c3039'},{n:'800',hex:'#242833'},{n:'900',hex:'#1a1d24'},
+];
+
+function ColorTile({ label, hex, token, desc }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    const cssVar = '--' + token.toLowerCase().replace(/\//g,'-').replace(/\s+/g,'-').replace(/[()%]/g,'');
+    navigator.clipboard.writeText(cssVar);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1400);
+  };
+  const isLight = hex.startsWith('#') && hex.length <= 7 && parseInt(hex.slice(1),16) > 0xbbbbbb;
+  const hasAlpha = hex.length > 7 || hex.startsWith('rgba');
+  return (
+    <button className="color-tile" onClick={copy} title={desc}>
+      <div
+        className={`color-tile-swatch${hasAlpha?' alpha-bg':''}`}
+        style={{background: hex}}
+      />
+      <div className="color-tile-info">
+        <span className="color-tile-name">{label}</span>
+        <span className="color-tile-hex">{copied ? '✓ Copied!' : hex}</span>
+        <span className="color-tile-token">{token}</span>
+      </div>
+    </button>
+  );
+}
+
+function GreyRamp() {
+  return (
+    <div style={{display:'flex',borderRadius:'8px',overflow:'hidden',height:'64px'}}>
+      {GREY_RAMP.map(c => {
+        const light = parseInt(c.hex.slice(1),16) > 0x999999;
+        return (
+          <button key={c.n} title={c.hex}
+            onClick={() => navigator.clipboard.writeText(c.hex)}
+            style={{flex:1,background:c.hex,border:'none',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:1,transition:'flex .15s ease'}}
+            onMouseEnter={e => e.currentTarget.style.flex='2'}
+            onMouseLeave={e => e.currentTarget.style.flex='1'}
+          >
+            <span style={{fontFamily:'var(--mono)',fontSize:'9px',fontWeight:500,color:light?'#1a1d24':'#f3f4f599',pointerEvents:'none'}}>Grey/{c.n}</span>
+            <span style={{fontFamily:'var(--mono)',fontSize:'8px',color:light?'#1a1d2466':'#f3f4f544',pointerEvents:'none'}}>{c.hex}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ColorsPage() {
+  return (
+    <div>
+      <PageHero
+        eyebrow="Foundation"
+        title="Colors"
+        desc="The Viz.ai color system uses a dark surface hierarchy with semantic tokens for actions, text, icons, and borders. All values sourced directly from Figma node 9365-57140 (Mapped Components). Click any swatch to copy the CSS variable name."
+        meta={[
+          { label:'Source', val:'Component (Mapped)' },
+          { label:'Tokens', val:'75 variables' },
+          { label:'Mode', val:'Dark only' },
+          { label:'Figma var-set', val:'8171-131' },
+        ]}
+      />
+      <div className="page-content">
+        {COLOR_DATA.map(group => (
+          <Section key={group.group} title={group.group} desc={group.desc}>
+            <div className="color-grid">
+              {group.colors.map(c => <ColorTile key={c.token} {...c}/>)}
+            </div>
+          </Section>
+        ))}
+
+        <Section title="Grey ramp" desc="Neutral grey scale used for surfaces, text hierarchy, and disabled states.">
+          <GreyRamp />
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   TYPOGRAPHY PAGE
+══════════════════════════════════════════════════ */
+const TYPE_SCALE = [
+  { label:'Display',   size:52, weight:700, lh:'1.05', ls:'-.03em', usage:'Page-level hero titles' },
+  { label:'H1',        size:32, weight:600, lh:'1.15', ls:'-.02em', usage:'Section headings' },
+  { label:'H2',        size:24, weight:600, lh:'1.2',  ls:'-.015em',usage:'Subsection headings' },
+  { label:'H3',        size:20, weight:600, lh:'1.3',  ls:'-.01em', usage:'Card headings, group labels' },
+  { label:'Body Lg',   size:16, weight:600, lh:'24px', ls:'0',      usage:'Figma: Body Semibold' },
+  { label:'Body',      size:14, weight:400, lh:'1.65', ls:'0',      usage:'Standard body text' },
+  { label:'Body Sm',   size:13, weight:400, lh:'1.6',  ls:'0',      usage:'Table rows, supporting text' },
+  { label:'Caption',   size:12, weight:400, lh:'14px', ls:'.066px', usage:'Figma: Caption — timestamps' },
+  { label:'Label',     size:11, weight:500, lh:'1.4',  ls:'.02em',  usage:'UI labels, tags' },
+  { label:'Micro',     size:10, weight:600, lh:'1.4',  ls:'.1em',   usage:'UPPERCASE section labels' },
+];
+
+function TypographyPage() {
+  return (
+    <div>
+      <PageHero
+        eyebrow="Foundation"
+        title="Typography"
+        desc="Viz.ai uses the SF Pro system font stack. The Figma design system defines two canonical text styles: Body Semibold (16px/600/24 lh) and Caption (12px/400/14 lh). The full type scale is used in the web application."
+      />
+      <div className="page-content">
+        <Section title="Font family" desc="SF Pro renders natively on Apple platforms. Inter is used as the documentation site font.">
+          <div style={{background:'var(--surface-1)',border:'1px solid var(--border-0)',borderRadius:'8px',padding:'32px 36px',display:'flex',flexDirection:'column',gap:'16px'}}>
+            <p style={{fontSize:'36px',fontWeight:700,letterSpacing:'-.02em',color:'var(--text-primary)',lineHeight:1.1}}>
+              The quick brown fox jumps over the lazy dog
+            </p>
+            <p style={{fontSize:'16px',color:'var(--text-secondary)',fontFamily:'var(--mono)'}}>
+              -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif
+            </p>
+          </div>
+        </Section>
+
+        <Section title="Type scale">
+          <div className="type-scale">
+            {TYPE_SCALE.map(r => (
+              <div key={r.label} className="type-row">
+                <div className="type-meta">
+                  <span className="type-label">{r.label}</span>
+                  <span className="type-measure">{r.size}px · {r.weight} · lh {r.lh} · ls {r.ls}</span>
+                  <span className="type-usage">{r.usage}</span>
+                </div>
+                <p className="type-sample" style={{fontSize:r.size,fontWeight:r.weight,lineHeight:r.lh,letterSpacing:r.ls}}>
+                  The quick brown fox
+                </p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section title="Canonical Figma styles" desc="Two official text styles defined in the design system — all other sizes are component-level overrides.">
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'2px',borderRadius:'8px',overflow:'hidden'}}>
+            {[
+              {name:'Body Semibold',spec:'16px / 600 / lh 24px / ls 0',sample:'Card Title'},
+              {name:'Caption',spec:'12px / 400 / lh 14px / ls 0.066px',sample:'Mar 12, 3:56 PM'},
+            ].map(s => (
+              <div key={s.name} style={{background:'var(--surface-1)',padding:'28px 32px',display:'flex',flexDirection:'column',gap:'16px'}}>
+                <span style={{fontSize:'10px',fontWeight:600,letterSpacing:'.12em',textTransform:'uppercase',color:'var(--text-tertiary)'}}>{s.name}</span>
+                <p style={{fontSize:s.name==='Body Semibold'?'16px':'12px',fontWeight:s.name==='Body Semibold'?600:400,lineHeight:s.name==='Body Semibold'?'24px':'14px',letterSpacing:s.name==='Caption'?'.066px':0,color:'var(--text-primary)'}}>
+                  {s.sample}
+                </p>
+                <span style={{fontFamily:'var(--mono)',fontSize:'11px',color:'var(--text-tertiary)'}}>{s.spec}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   SPACING PAGE
+══════════════════════════════════════════════════ */
+const SPACING_VALS = [2,4,6,8,10,12,16,20,24,28,32,40,48,56,64];
+const RADIUS_VALS = [
+  {px:2,label:'radius/2',usage:'Tags, micro elements'},
+  {px:4,label:'radius/4',usage:'Chips, icon buttons'},
+  {px:6,label:'radius/6',usage:'Buttons, inputs, nav items'},
+  {px:8,label:'radius/8',usage:'Cards, dropdowns'},
+  {px:12,label:'radius/12',usage:'Modals, sheets'},
+  {px:16,label:'radius/16',usage:'Large containers'},
+  {px:24,label:'radius/24',usage:''},
+  {px:40,label:'radius/40',usage:'Pill shapes'},
+  {px:9999,label:'radius/80',usage:'Full pill / circle'},
+];
+
+function SpacingPage() {
+  return (
+    <div>
+      <PageHero eyebrow="Foundation" title="Spacing" desc="Spacing tokens map to Figma's Primitives (brand) → spacing/* values with a base unit of 2px. Border radius follows the same source: radius/* in Figma."/>
+      <div className="page-content">
+        <Section title="Spacing scale" desc="Use these token values instead of arbitrary px values to maintain consistent rhythm across the product.">
+          <div style={{display:'flex',flexDirection:'column'}}>
+            {SPACING_VALS.map(px => (
+              <div key={px} className="spacing-row">
+                <div>
+                  <code style={{fontFamily:'var(--mono)',fontSize:'12px',color:'var(--action-primary)'}}>{`--space-${px}`}</code>
+                  <span style={{fontFamily:'var(--mono)',fontSize:'11px',color:'var(--text-tertiary)',marginLeft:'12px'}}>{px}px</span>
+                </div>
+                <div style={{fontFamily:'var(--mono)',fontSize:'11px',color:'var(--text-tertiary)'}}>{(px/4).toFixed(1)}× base</div>
+                <div><div className="spacing-bar-fill" style={{width:`${Math.min(px*3,360)}px`}}/></div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section title="Border radius" desc="All components use one of these radius values. Cards and modals use 8px and 12px respectively.">
+          <div className="radius-grid">
+            {RADIUS_VALS.map(r => (
+              <div key={r.px} className="radius-card">
+                <div className="radius-box" style={{borderRadius:`${r.px}px`}}/>
+                <code style={{fontFamily:'var(--mono)',fontSize:'12px',fontWeight:600,color:'var(--text-primary)'}}>{r.px===9999?'∞':r.px+'px'}</code>
+                <span style={{fontFamily:'var(--mono)',fontSize:'10px',color:'var(--action-primary)'}}>{r.label}</span>
+                {r.usage && <span style={{fontSize:'10px',color:'var(--text-tertiary)',textAlign:'center',lineHeight:1.3}}>{r.usage}</span>}
+              </div>
+            ))}
+          </div>
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   ICONS PAGE
+══════════════════════════════════════════════════ */
+const ICON_CATS = [
+  { cat:'Actions', icons:[
+    { name:'star--filled', svg:<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5l1.8 3.6 4 .6-2.9 2.8.7 4L8 10.3l-3.6 1.9.7-4-2.9-2.8 4-.6z" strokeLinejoin="round"/></svg>},
+    { name:'overflow-menu', svg:<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="4" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="12" cy="8" r="1.4"/></svg>},
+    { name:'close', svg:<svg viewBox="0 0 16 16" fill="none"><path d="M12 4L4 12M4 4l8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+    { name:'add', svg:<svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+    { name:'edit', svg:<svg viewBox="0 0 16 16" fill="none"><path d="M11 3l2 2-8 8H3v-2L11 3z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>},
+  ]},
+  { cat:'Status', icons:[
+    { name:'checkmark', svg:<svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+    { name:'warning', svg:<svg viewBox="0 0 16 16" fill="none"><path d="M8 2L14.5 13H1.5L8 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/><path d="M8 6v3.5M8 11.5h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>},
+    { name:'information', svg:<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.4"/><path d="M8 7v4.5M8 5h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>},
+    { name:'error', svg:<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.4"/><path d="M6 6l4 4M10 6l-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>},
+  ]},
+  { cat:'Navigation', icons:[
+    { name:'chevron-down', svg:<svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>},
+    { name:'arrow-right', svg:<svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>},
+    { name:'search', svg:<svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M11 11l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>},
+    { name:'settings', svg:<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.4"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>},
+    { name:'time', svg:<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.4"/><path d="M8 5v3.5l2 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>},
+  ]},
+];
+
+function IconsPage() {
+  return (
+    <div>
+      <PageHero eyebrow="Foundation" title="Iconography" desc="Icons come from the Carbon Design System icon set — the same library used in Figma. Default icon color is Colors/Icons/secondary (#c0c0c9). 16px is the standard size for most UI contexts."/>
+      <div className="page-content">
+        <Section title="Sizes" desc="Four sizes map to fixed px values. Never scale icons to non-standard sizes.">
+          <div style={{display:'flex',gap:'2px',borderRadius:'8px',overflow:'hidden'}}>
+            {[{px:12,label:'XS'},{px:16,label:'SM — standard'},{px:20,label:'MD'},{px:24,label:'LG'}].map(s => (
+              <div key={s.px} style={{flex:1,background:'var(--surface-1)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'10px',padding:'24px 8px'}}>
+                <div style={{color:'var(--icon-secondary)',height:32,display:'flex',alignItems:'center'}}>
+                  <svg width={s.px} height={s.px} viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M11 11l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                </div>
+                <code style={{fontFamily:'var(--mono)',fontSize:'13px',fontWeight:600,color:'var(--text-primary)'}}>{s.px}px</code>
+                <span style={{fontSize:'11px',color:'var(--action-primary)',fontWeight:500}}>{s.label}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {ICON_CATS.map(cat => (
+          <Section key={cat.cat} title={cat.cat}>
+            <div className="icon-grid">
+              {cat.icons.map(icon => (
+                <div key={icon.name} className="icon-cell" title={icon.name}>
+                  <div style={{width:20,height:20,color:'var(--icon-secondary)'}}>{icon.svg}</div>
+                  <span className="icon-name">{icon.name}</span>
+                </div>
+              ))}
+            </div>
+          </Section>
+        ))}
+
+        <Section title="Usage guidelines">
+          <DoDont
+            dos={['Use 16px icons in standard UI contexts (buttons, inputs, nav)','Add aria-label or aria-hidden="true" to all SVGs','Use color tokens — never hardcode fill colors']}
+            donts={["Don't use icon-only buttons without tooltips or aria-labels","Don't mix filled and outline icon styles in the same context","Don't scale icons to non-standard sizes (use the 12/16/20/24 set)"]}
+          />
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   BUTTON PAGE
+══════════════════════════════════════════════════ */
+function ButtonPage() {
+  const [loading, setLoading] = useState(false);
+  const go = () => { setLoading(true); setTimeout(() => setLoading(false), 1800); };
+
+  return (
+    <div>
+      <PageHero
+        eyebrow="Components"
+        title="Button"
+        desc="Triggers actions. Five types from Figma: Primary, Secondary, Tertiary, Ghost, Destructive. All share 4px radius and 14px/400 text."
+        meta={[
+          {label:'Node',val:'6103:69133'},
+          {label:'Sizes',val:'xs · sm · md · lg'},
+          {label:'States',val:'default · hover · active · disabled · loading'},
+        ]}
+      />
+      <div className="page-content">
+        <Section title="Variants" desc="Use primary for the single most important action. Use ghost or tertiary for low-priority actions.">
+          <Preview
+            preview={<>
+              <button className="btn md primary">Primary</button>
+              <button className="btn md secondary">Secondary</button>
+              <button className="btn md tertiary">Tertiary</button>
+              <button className="btn md ghost">Ghost</button>
+              <button className="btn md danger">Destructive</button>
+            </>}
+            code={`<Button variant="primary">Primary</Button>     {/* bg #3485f7 */}
+<Button variant="secondary">Secondary</Button> {/* border rgba(255,255,255,0.3) */}
+<Button variant="tertiary">Tertiary</Button>   {/* bg rgba(255,255,255,0.05) */}
+<Button variant="ghost">Ghost</Button>         {/* no fill, no border */}
+<Button variant="danger">Destructive</Button>  {/* bg #ff586b */}`}
+          />
+        </Section>
+
+        <Section title="Sizes" desc="XS=20px · SM=24px · MD=32px (default) · LG=40px. All use 4px radius and 6px horizontal padding.">
+          <Preview
+            preview={<div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
+              <button className="btn xs primary">XSmall</button>
+              <button className="btn sm primary">Small</button>
+              <button className="btn md primary">Medium</button>
+              <button className="btn lg primary">Large</button>
+            </div>}
+            code={`<Button size="xs">XSmall</Button>  {/* h: 20px */}
+<Button size="sm">Small</Button>    {/* h: 24px */}
+<Button size="md">Medium</Button>   {/* h: 32px — default */}
+<Button size="lg">Large</Button>    {/* h: 40px */}`}
+          />
+        </Section>
+
+        <Section title="States">
+          <Preview
+            preview={<div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center'}}>
+              <button className="btn md primary" onClick={go}>
+                {loading ? <><span className="btn-spin"/>&nbsp;Saving…</> : 'Click to load'}
+              </button>
+              <button className="btn md primary" disabled>Disabled</button>
+              <button className="btn md secondary" disabled>Sec disabled</button>
+            </div>}
+            code={`<Button loading>Saving…</Button>
+<Button disabled>Disabled</Button>  {/* #5a606d fill for filled variants */}`}
+          />
+        </Section>
+
+        <Section title="Props API">
+          <PropsTable props={[
+            {name:'variant', type:"'primary'|'secondary'|'tertiary'|'ghost'|'danger'", default:"'primary'", desc:'Visual style from Figma' },
+            {name:'size',    type:"'xs'|'sm'|'md'|'lg'", default:"'md'", desc:'Height — xs:20px sm:24px md:32px lg:40px' },
+            {name:'disabled',type:'boolean', default:'false', desc:'Filled → #5a606d bg. Others → 38% opacity' },
+            {name:'loading', type:'boolean', default:'false', desc:'Shows spinner, prevents click' },
+            {name:'onClick', type:'function', default:'—',    desc:'Click handler' },
+          ]}/>
+        </Section>
+
+        <Section title="Token reference">
+          <div style={{display:'flex',flexDirection:'column',borderRadius:'8px',overflow:'hidden',border:'1px solid var(--border-0)'}}>
+            {[
+              {state:'Primary default',  token:'Colors/Actions/action-primary-default',    val:'#3485f7'},
+              {state:'Primary hover',    token:'Colors/Actions/action-primary-hover-main', val:'#0066ff'},
+              {state:'Primary active ring',token:'Colors/borders/border-focus',            val:'#5ca3ff'},
+              {state:'Destructive',      token:'Colors/Actions/destrcutive',               val:'#ff586b'},
+              {state:'Tertiary default', token:'Colors/Actions/level 1',                   val:'rgba(255,255,255,0.05)'},
+              {state:'Tertiary hover',   token:'Colors/Actions/level 2',                   val:'rgba(255,255,255,0.10)'},
+              {state:'Secondary border', token:'Colors/borders/border-level 2',            val:'rgba(255,255,255,0.30)'},
+              {state:'Disabled (filled)',token:'Colors/Actions/disabled',                  val:'#5a606d'},
+            ].map((r,i) => (
+              <div key={r.state} style={{display:'grid',gridTemplateColumns:'200px 1fr 120px',alignItems:'center',gap:'var(--s4)',padding:'11px 16px',borderBottom:i<7?'1px solid var(--border-0)':'none',background:i%2?'transparent':'rgba(255,255,255,.015)'}}>
+                <span style={{fontSize:'13px',color:'var(--text-secondary)'}}>{r.state}</span>
+                <code style={{fontFamily:'var(--mono)',fontSize:'11px',color:'var(--action-primary)'}}>{r.token}</code>
+                <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+                  <span style={{width:'14px',height:'14px',borderRadius:'3px',background:r.val,border:'1px solid rgba(255,255,255,.15)',display:'inline-block',flexShrink:0}}/>
+                  <code style={{fontFamily:'var(--mono)',fontSize:'11px',color:'var(--text-tertiary)'}}>{r.val}</code>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section title="Do / Don't">
+          <DoDont
+            dos={['One primary per view — it is the single most important action','Show loading state for async operations','Use danger only for irreversible destructive actions']}
+            donts={["Don't use #4e9fd4 for buttons — Text/action is #3485f7, same as primary fill","Don't change border-radius — all buttons use 4px","Don't use more than one primary button per screen area"]}
+          />
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   BADGE PAGE
+══════════════════════════════════════════════════ */
+function BadgePage() {
+  return (
+    <div>
+      <PageHero eyebrow="Components" title="Badge" desc="Two badge types: status labels (semantic color chips for case states) and notification counts (from the Figma Badge component). Both are read-only and non-interactive."/>
+      <div className="page-content">
+        <Section title="Status labels" desc="Semantic status labels for case states, categories, and system status.">
+          <Preview
+            preview={<div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+              <span className="badge neutral">Pending</span>
+              <span className="badge info">In Review</span>
+              <span className="badge success">Cleared</span>
+              <span className="badge warning">Expiring</span>
+              <span className="badge error">Critical</span>
+            </div>}
+            code={`<Badge variant="neutral">Pending</Badge>
+<Badge variant="info">In Review</Badge>
+<Badge variant="success">Cleared</Badge>
+<Badge variant="warning">Expiring</Badge>
+<Badge variant="error">Critical</Badge>`}
+          />
+        </Section>
+
+        <Section title="With status dot">
+          <Preview
+            preview={<div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+              <span className="badge success"><span className="badge-dot"/>Online</span>
+              <span className="badge warning"><span className="badge-dot"/>Degraded</span>
+              <span className="badge error"><span className="badge-dot"/>Offline</span>
+            </div>}
+            code={`<Badge variant="success" dot>Online</Badge>
+<Badge variant="warning" dot>Degraded</Badge>
+<Badge variant="error" dot>Offline</Badge>`}
+          />
+        </Section>
+
+        <Section title="Notification badge (Figma: Badge)" desc="Count indicators. Primary = #3485f7. Secondary = surface-3. Sizes: sm (13px), md (16px), lg (20px). Radius: pill or square (4px).">
+          <Preview
+            preview={<div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
+              <span className="notif-badge nb-primary nb-sm">1</span>
+              <span className="notif-badge nb-primary nb-md">1</span>
+              <span className="notif-badge nb-primary nb-lg">99+</span>
+              <span className="notif-badge nb-secondary nb-md">XX+</span>
+              <span className="notif-badge nb-primary nb-md sq">7</span>
+            </div>}
+            code={`{/* Pill — most common */}
+<Badge type="Primary" size="Large">99+</Badge>
+{/* Square 4px radius */}
+<Badge type="Primary" size="Medium" radius="4">7</Badge>`}
+          />
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   INPUT PAGE
+══════════════════════════════════════════════════ */
+function InputPage() {
+  const [val, setVal] = useState('');
+  const Search = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M11 11l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>;
+  return (
+    <div>
+      <PageHero eyebrow="Components" title="Input" desc="Text field (Figma node 7748:30941). Transparent fill, 1px border rgba(255,255,255,0.3), 4px top radius only. Focused border = #a3a6b5, NOT blue. Error border = rgba(255,88,107,0.4) — translucent."/>
+      <div className="page-content">
+        <Section title="Basic" desc="Click a field to see the focused state — border turns to #a3a6b5 (border-default), not blue.">
+          <Preview
+            preview={<div style={{display:'flex',flexDirection:'column',gap:16,width:'100%',maxWidth:340}}>
+              <div className="field">
+                <label className="field-label">Patient ID</label>
+                <div className="input-wrap md"><input className="input-el" placeholder="e.g. PAT-00123"/></div>
+              </div>
+              <div className="field">
+                <label className="field-label">Search</label>
+                <div className="input-wrap md">
+                  <span className="input-icon"><Search/></span>
+                  <input className="input-el" placeholder="Search cases…"/>
+                </div>
+              </div>
+            </div>}
+            code={`<Input label="Patient ID" placeholder="e.g. PAT-00123" />
+<Input label="Search" prefixIcon={<SearchIcon />} />`}
+          />
+        </Section>
+
+        <Section title="Validation states">
+          <Preview
+            preview={<div style={{display:'flex',flexDirection:'column',gap:14,width:'100%',maxWidth:340}}>
+              <div className="field">
+                <label className="field-label">Accession #</label>
+                <div className="input-wrap md err"><input className="input-el" defaultValue="CTH-invalid"/></div>
+                <span className="input-helper err">Accession not found in PACS</span>
+              </div>
+              <div className="field">
+                <label className="field-label">Notes</label>
+                <div className="input-wrap md">
+                  <input className="input-el" value={val} onChange={e=>setVal(e.target.value)} placeholder="Add a note…" maxLength={120}/>
+                  <span style={{fontSize:'10px',color:'var(--text-tertiary)',fontFamily:'var(--mono)',flexShrink:0}}>{val.length}/120</span>
+                </div>
+                <span className="input-helper">Optional internal note</span>
+              </div>
+            </div>}
+            code={`{/* Error border = rgba(255,88,107,0.4) — translucent */}
+<Input errorText="Accession not found in PACS" />
+{/* Focused border = border-default (#a3a6b5) — NOT blue */}
+<Input helperText="Optional note" maxLength={120} />`}
+          />
+        </Section>
+
+        <Section title="Key spec callout">
+          <div className="callout info">
+            <span className="callout-icon">ℹ</span>
+            <p className="callout-text"><strong>Focused state is not blue.</strong> The input uses <code style={{fontFamily:'var(--mono)',fontSize:'12px',color:'var(--action-primary)'}}>Colors/borders/border-default</code> = #a3a6b5 on focus — not the action blue. This matches the Figma spec exactly (node 7748:30941).</p>
+          </div>
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   CARD PAGE
+══════════════════════════════════════════════════ */
+function CardPage() {
+  return (
+    <div>
+      <PageHero eyebrow="Components" title="Card" desc="Primary surface for case-level information. Mirrors Figma node 9342:47404 — surface-2-main background (#2c3039), 8px radius, 8px left indent strip, title at Body Semibold (16px/600)."/>
+      <div className="page-content">
+        <Section title="Default case card" desc="Directly matches the Figma spec: title, caption timestamp, star and overflow actions.">
+          <Preview
+            dark
+            preview={<div style={{width:'100%',maxWidth:420}}>
+              <div className="viz-card">
+                <div className="card-indent"/>
+                <div className="card-body">
+                  <div style={{display:'flex',alignItems:'flex-start'}}>
+                    <div style={{flex:1,minWidth:0}}>
+                      <p className="card-title">Ischemic Stroke Alert</p>
+                      <p className="card-sub">CT Head · Angiography</p>
+                      <p className="card-ts">
+                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.4"/><path d="M8 5v3.5l2 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
+                        Mar 12, 3:56 PM
+                      </p>
+                    </div>
+                    <div className="card-actions">
+                      <button className="card-icon-btn"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5l1.8 3.6 4 .6-2.9 2.8.7 4L8 10.3l-3.6 1.9.7-4-2.9-2.8 4-.6z"/></svg></button>
+                      <button className="card-icon-btn"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><circle cx="4" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="12" cy="8" r="1.3"/></svg></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>}
+            code={`<Card
+  title="Ischemic Stroke Alert"
+  subtitle="CT Head · Angiography"
+  timestamp="Mar 12, 3:56 PM"
+  starred
+/>`}
+          />
+        </Section>
+
+        <Section title="Card with body and actions">
+          <Preview
+            dark
+            preview={<div style={{width:'100%',maxWidth:420}}>
+              <div className="viz-card">
+                <div className="card-indent" style={{background:'var(--color-error)'}}/>
+                <div className="card-body">
+                  <div style={{display:'flex',alignItems:'flex-start'}}>
+                    <div style={{flex:1,minWidth:0}}>
+                      <p className="card-title">Patient: John D.</p>
+                      <p className="card-ts"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.4"/><path d="M8 5v3.5l2 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>2 min ago</p>
+                    </div>
+                    <div className="card-actions">
+                      <button className="card-icon-btn"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><circle cx="4" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="12" cy="8" r="1.3"/></svg></button>
+                    </div>
+                  </div>
+                  <p style={{fontSize:'13px',color:'var(--text-secondary)',margin:'6px 0 10px',lineHeight:1.5}}>LVO detected in left MCA. NIHSS score: 14. Recommend thrombectomy evaluation.</p>
+                  <div style={{display:'flex',gap:8,borderTop:'1px solid var(--border-0)',paddingTop:8}}>
+                    <button className="btn sm ghost">Dismiss</button>
+                    <button className="btn sm primary">Assign</button>
+                  </div>
+                </div>
+              </div>
+            </div>}
+            code={`<Card title="Patient: John D." timestamp="2 min ago"
+  actions={<><Button variant="ghost" size="sm">Dismiss</Button>
+  <Button size="sm">Assign</Button></>}>
+  LVO detected in left MCA. NIHSS score: 14.
+</Card>`}
+          />
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   MODAL PAGE
+══════════════════════════════════════════════════ */
+function ModalPage() {
+  const [open1, setOpen1] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  return (
+    <div>
+      <PageHero eyebrow="Components" title="Modal" desc="Focus the user on a task or decision. Locks background scroll, traps keyboard focus, closes on Escape or backdrop click. Uses surface-3 (#3c4455) background."/>
+      <div className="page-content">
+        <Section title="Confirmation dialog">
+          <Preview
+            preview={<>
+              <button className="btn md primary" onClick={() => setOpen1(true)}>Open modal</button>
+              {open1 && (
+                <div className="modal-overlay" onClick={e => { if(e.target===e.currentTarget) setOpen1(false) }}>
+                  <div className="modal-box md">
+                    <div className="modal-head">
+                      <div style={{flex:1}}>
+                        <p className="modal-title">Assign to radiologist</p>
+                        <p className="modal-desc">Select a radiologist and confirm the case assignment.</p>
+                      </div>
+                      <button className="modal-close" onClick={() => setOpen1(false)}>
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M12 4L4 12M4 4l8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                      </button>
+                    </div>
+                    <div className="modal-body-content">The case will be routed to the selected radiologist's worklist immediately.</div>
+                    <div className="modal-footer">
+                      <button className="btn md ghost" onClick={() => setOpen1(false)}>Cancel</button>
+                      <button className="btn md primary" onClick={() => setOpen1(false)}>Assign</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>}
+            code={`<Modal
+  open={open}
+  onClose={() => setOpen(false)}
+  title="Assign to radiologist"
+  footer={<><Button variant="ghost">Cancel</Button>
+  <Button>Assign</Button></>}
+/>`}
+          />
+        </Section>
+
+        <Section title="Destructive confirm">
+          <Preview
+            preview={<>
+              <button className="btn md danger" onClick={() => setOpen2(true)}>Delete case</button>
+              {open2 && (
+                <div className="modal-overlay" onClick={e => { if(e.target===e.currentTarget) setOpen2(false) }}>
+                  <div className="modal-box sm">
+                    <div className="modal-head">
+                      <div style={{flex:1}}>
+                        <p className="modal-title">Delete this case?</p>
+                        <p className="modal-desc">This action cannot be undone.</p>
+                      </div>
+                      <button className="modal-close" onClick={() => setOpen2(false)}>
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M12 4L4 12M4 4l8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                      </button>
+                    </div>
+                    <div className="modal-footer">
+                      <button className="btn md ghost" onClick={() => setOpen2(false)}>Cancel</button>
+                      <button className="btn md danger" onClick={() => setOpen2(false)}>Delete</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>}
+            code={`<Modal size="sm" title="Delete this case?"
+  description="This cannot be undone."
+  footer={<><Button ghost>Cancel</Button>
+  <Button variant="danger">Delete</Button></>}
+/>`}
+          />
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   DROPDOWN PAGE
+══════════════════════════════════════════════════ */
+function DropdownPage() {
+  const [v1, setV1] = useState('high');
+  const [v2, setV2] = useState('');
+  const [o1, setO1] = useState(false);
+  const [o2, setO2] = useState(false);
+  const r1 = useRef(null), r2 = useRef(null);
+  const OPTS1 = [{v:'critical',l:'Critical'},{v:'high',l:'High'},{v:'medium',l:'Medium'},{v:'low',l:'Low'}];
+  const OPTS2 = [{v:'ct',l:'CT'},{v:'mri',l:'MRI'},{v:'xr',l:'X-Ray'},{v:'us',l:'Ultrasound'}];
+  useEffect(() => {
+    const h = e => { if(!r1.current?.contains(e.target)) setO1(false); if(!r2.current?.contains(e.target)) setO2(false); };
+    document.addEventListener('mousedown',h);
+    return () => document.removeEventListener('mousedown',h);
+  },[]);
+  const Dd = ({ref2, label, opts, val, setVal, open, setOpen, placeholder='Select…'}) => {
+    const sel = opts.find(o => o.v===val);
+    return (
+      <div ref={ref2} className="dd-wrap">
+        {label && <label className="dd-label">{label}</label>}
+        <button className={`dd-trigger${open?' open':''}`} onClick={() => setOpen(x=>!x)}>
+          <span style={!sel?{color:'var(--text-tertiary)'}:{}}>{sel?sel.l:placeholder}</span>
+          <svg className={`dd-chevron${open?' up':''}`} width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        </button>
+        {open && <ul className="dd-menu">
+          {opts.map(o => (
+            <li key={o.v} className={`dd-option${o.v===val?' selected':''}`} onClick={() => { setVal(o.v); setOpen(false); }}>
+              {o.l}
+              {o.v===val && <svg className="dd-check" width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l2.5 2.5L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>}
+            </li>
+          ))}
+        </ul>}
+      </div>
+    );
+  };
+  return (
+    <div>
+      <PageHero eyebrow="Components" title="Dropdown" desc="Select one option from a list. Opens inline below the trigger with top-radius only styling, closing on selection, outside click, or Escape."/>
+      <div className="page-content">
+        <Section title="Basic usage">
+          <Preview
+            preview={<div style={{display:'flex',gap:20,flexWrap:'wrap',alignItems:'flex-start',paddingBottom:120}}>
+              <Dd ref2={r1} label="Priority" opts={OPTS1} val={v1} setVal={setV1} open={o1} setOpen={setO1}/>
+              <Dd ref2={r2} label="Modality" opts={OPTS2} val={v2} setVal={setV2} open={o2} setOpen={setO2} placeholder="Select modality…"/>
+            </div>}
+            code={`<Dropdown label="Priority"
+  options={[{value:'critical',label:'Critical'},{value:'high',label:'High'}]}
+  value={priority} onChange={setPriority}
+/>`}
+          />
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   TOAST PAGE
+══════════════════════════════════════════════════ */
+const TOAST_ICONS = {
+  success: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#32ab45" opacity=".15"/><circle cx="8" cy="8" r="7" stroke="#32ab45" strokeWidth="1.4"/><path d="M5 8l2 2 4-4" stroke="#32ab45" strokeWidth="1.5" strokeLinecap="round"/></svg>,
+  error:   <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#ff586b" opacity=".15"/><circle cx="8" cy="8" r="7" stroke="#ff586b" strokeWidth="1.4"/><path d="M6 6l4 4M10 6l-4 4" stroke="#ff586b" strokeWidth="1.4" strokeLinecap="round"/></svg>,
+  warning: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2L14.5 13H1.5L8 2z" fill="#f6ad3f" opacity=".15" stroke="#f6ad3f" strokeWidth="1.4" strokeLinejoin="round"/><path d="M8 6v3.5M8 11.5h.01" stroke="#f6ad3f" strokeWidth="1.5" strokeLinecap="round"/></svg>,
+  info:    <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#3485f7" opacity=".15"/><circle cx="8" cy="8" r="7" stroke="#3485f7" strokeWidth="1.4"/><path d="M8 7v4.5M8 5h.01" stroke="#3485f7" strokeWidth="1.5" strokeLinecap="round"/></svg>,
+};
+
+const TOAST_MSGS = {
+  success:{title:'Case assigned',desc:'Dr. Smith has been notified.'},
+  error:{title:'Connection failed',desc:'Unable to reach the server.'},
+  warning:{title:'Session expiring',desc:'Logged out in 5 minutes.'},
+  info:{title:'New case available',desc:'A high-priority case was added.'},
+};
+
+function ToastItem({ variant, title, desc, onClose }) {
+  useEffect(() => { const t = setTimeout(() => onClose?.(), 5000); return () => clearTimeout(t); },[]);
+  return (
+    <div className={`toast ${variant}`}>
+      <span className="toast-icon">{TOAST_ICONS[variant]}</span>
+      <div className="toast-content">
+        <p className="toast-title">{title}</p>
+        <p className="toast-desc">{desc}</p>
+      </div>
+      <button className="toast-close" onClick={onClose}>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M9 3L3 9M3 3l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+      </button>
+    </div>
+  );
+}
+
+function ToastPage() {
+  const [toasts, setToasts] = useState([]);
+  const add = v => setToasts(t => [...t, {id:Date.now(), v}]);
+  const rm = id => setToasts(t => t.filter(x => x.id !== id));
+  return (
+    <div>
+      <PageHero eyebrow="Components" title="Toast" desc="Transient non-blocking notifications. Auto-dismiss after 5s. Use for system feedback — not for actions requiring a response."/>
+      <div className="page-content">
+        <Section title="Live demo" desc="Trigger toast notifications and see them appear.">
+          <Preview
+            preview={<div style={{display:'flex',flexDirection:'column',gap:16,width:'100%'}}>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                {['success','error','warning','info'].map(v => (
+                  <button key={v} className="btn sm secondary" style={{textTransform:'capitalize'}} onClick={() => add(v)}>{v}</button>
+                ))}
+              </div>
+              <div className="toast-stack">
+                {toasts.map(t => <ToastItem key={t.id} variant={t.v} {...TOAST_MSGS[t.v]} onClose={() => rm(t.id)}/>)}
+              </div>
+            </div>}
+            code={`<Toast variant="success" title="Case assigned"
+  description="Dr. Smith has been notified."
+  onClose={() => setVisible(false)}
+/>`}
+          />
+        </Section>
+
+        <Section title="All variants static">
+          <div className="toast-stack" style={{maxWidth:400}}>
+            {['success','error','warning','info'].map(v => (
+              <ToastItem key={v} variant={v} {...TOAST_MSGS[v]} onClose={()=>{}}/>
+            ))}
+          </div>
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   APP ROOT
+══════════════════════════════════════════════════ */
+function App() {
+  const [page, setPage] = useState('overview');
+  return <Shell page={page} setPage={setPage}/>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
